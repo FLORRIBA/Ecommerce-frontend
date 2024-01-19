@@ -7,14 +7,36 @@ import detergente from '../../assets/images/cards/detergente.jpg'
 import hidrolatos from '../../assets/images/cards/hidrolatos.jpg'
 import pasta from '../../assets/images/cards/pasta-dental2.jpg'
 
-export default function Cards(){
+import React from 'react'
+
+export default function ProductCards({product}){
 
 return(
     <>
+                <article className="card" key={product._id}>
+                    <div className="imgBx">
+                        <img src={box} alt="" className="box-img" loading="lazy"/>
+                    </div>
+                    <div className="card-container">
+                        <div className="card-info">
+                            <h2 className="card-info-title">{product.producto} </h2>
+                            <p className="card-info-text">{product.descipcion}
+                            </p>
+                        </div>
+                        <div className="card-values">
+                            <div className="card-date"> {product.fecha} </div>
+                            <div className="card-price">{product.precio} </div>
+                        </div>
 
+                        <footer className="card-footer">
+                            <a href="#" className="card-button">Ver más</a>
+                            <button className="card-btn">Comprar</button>
+                        </footer>
 
-
-                <article className="card">
+                    </div>
+                </article>
+{/* 
+                <article className="card" >
 
                     <div className="imgBx">
 
@@ -249,7 +271,7 @@ return(
                         </footer>
 
                     </div>
-                </article>
+                </article> */}
 
 
          

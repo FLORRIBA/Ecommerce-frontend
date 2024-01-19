@@ -14,3 +14,13 @@
   min-height: 100dvh;
 }
 
+.swal2-confirm{
+  background-color: bisque !important;
+  box-shadow: none !important;
+}
+
+.swal2-success-ring,
+.swal2-x-mark {
+  border-color: bisque !important;
+  color: bisque !important;
+}

@@ -7,8 +7,7 @@ export default function AdminRoute({children}) {
 
   //obtuve del localStorage si el usuario es ADMIN-ROLE
     const isAdmin = true;
-   console.log(typeof(isAdmin))
-   console.log(children)
+ 
   return (
   //ternario = TRUE=> devuelvo children-admin-product: FALSE lo redirecciono a Home (lo redireccionamos)
     isAdmin?  children : <Navigate to='/' replace />

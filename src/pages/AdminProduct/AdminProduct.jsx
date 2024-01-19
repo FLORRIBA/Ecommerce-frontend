@@ -1,59 +1,57 @@
+import { useForm } from "react-hook-form" //LIBRERIA DE REACT
 
 export default function AdminProduct() {
+    const {register, handleSubmit,watch} = useForm();
+    function submitedData (data){
+   
+    }
 
   return (
 
     <>
-   
-  
-    <main>
+<main>
+<div className="input-container  input-wrapper">
+    <input type="text" className="input" id="search" placeholder="Buscar por nombre"/>
+</div>
 
-    <div className="input-container  input-wrapper">
-        <input type="text" className="input" id="search" placeholder="Buscar por nombre"/>
-    </div>
+   <div className="admin-container">
 
-    <div className="admin-container">
         <section className="form-container">
-            <form id="user-form">
-                <input type="hidden" name="id"/>
+          {/* Formulario de carga de productos */}     
+            <form id="user-form" onSubmit= {handleSubmit(submitedData)}>//cuando se llama al submit = enviale data a la funcion
 
                 <div className="input-wrapper">
                     <label htmlFor="producto">Producto</label>
-                    <input type="text" name="producto" id="producto" minLength="5" maxLength="60" requiered
+                    <input type="text" {...register('product')} id="producto" minLength="5" maxLength="60" requiered
                         autoFocus />
                 </div>
                 <div className="input-wrapper">
                     <label htmlFor="descripcion">Descripcion</label>
-                    <input type="text" name="descripcion" id="descripcion" required />
+                    <input type="text" {...register('description')} id="descripcion" required />
                 </div>
                 <div className="input-wrapper">
                     <label htmlFor="precio">Precio</label>
-                    <input type="number" name="precio" id="precio" required />
+                    <input type="number" {...register('price')} id="precio" required />
                 </div>
-
-
                 <div className="input-wrapper">
                     <label htmlFor="fecha">Fecha</label>
-                    <input type="date" name="fecha" id="fecha" min=" 1930-01-01" />
-                </div>
-
-
+                    <input type="date" {...register('date')} id="fecha" min=" 1930-01-01" />
+                </div>              
                 <div className="input-wrapper">
                     <label htmlFor="image">Imagen</label>
-                    <input type="src" name="image" id="image" />
-
+                    <input type="src" {...register('image')} id="image" />
                 </div>
-
                 <div className="active">
                     <label htmlFor="active">Activo</label>
-                    <input type="checkbox" name="active" id="active" />
+                    <input type="checkbox" {...register('active')} id="active" />
                 </div>
-                <button type="submit" className="btn-form">Agregar producto</button>
 
+               <button type="submit" className="btn-form">Agregar Producto</button>
             </form>
-
         </section>
-        <section className="table-container">
+
+          {/* Tabla con mis productos para manejar el CRUD de los mismos */}
+          <section className="table-container">
             <table className="user-table" id="userTable">
                 <thead>
                     <tr className="table-head">
@@ -70,9 +68,9 @@ export default function AdminProduct() {
                 </tbody>
             </table>
         </section>
+
     </div>
 </main>
-
     </>
   )
 }

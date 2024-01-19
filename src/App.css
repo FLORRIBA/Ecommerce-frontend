@@ -816,7 +816,7 @@ button:hover {
 }
 .activo {
   color: var(--terra-color);
-  margin-left: 2rem;
+  margin-left: 2rem;  
   font-size: 1.3rem;
   margin-bottom: 0.8rem;
 }

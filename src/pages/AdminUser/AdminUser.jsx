@@ -1,7 +1,10 @@
-
-
-
- export default function AdminUser() {
+import { useForm } from "react-hook-form" //LIBRERIA DE REACT
+ 
+export default function AdminUser() {
+    const {register, handleSubmit,watch} = useForm();
+    function submitedData (data){
+   
+    }
 
     return(
   <>
@@ -14,28 +17,29 @@
 
 
     <div className="admin-container">
+
         <section className="form-container">
-            <form id="user-form">
+            <form id="user-form"onSubmit= {handleSubmit(submitedData)}>
                 <input type="hidden" name="id"/>
 
                 <div className="input-wrapper">
                     <label htmlFor="fullname">Nombre Completo</label>
-                    <input type="text" name="fullname" id="fullname" minLength="5" maxLength="60" requiered
+                    <input type="text" {...register('fullname')} id="fullname" minLength="5" maxLength="60" requiered
                         pattern="^[a-zA-Z]+( [a-zA-Z]+)*$" autoFocus />
                 </div>
                 <div className="input-wrapper">
                     <label htmlFor="email">E-mail</label>
-                    <input type="email" name="email" id="email" minLength="6" maxLength="140" required
+                    <input type="email" {...register('email')} id="email" minLength="6" maxLength="140" required
                         pattern="[a-zA-Z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" />
                 </div>
                 <div className="input-wrapper">
                     <label htmlFor="password">Contraseña</label>
-                    <input type="password" name="password" id="password" required />
+                    <input type="password" {...register('password')} id="password" required />
                 </div>
 
                 <div className="input-wrapper">
                     <label htmlFor="password2">Repetir contraseña</label>
-                    <input type="password" name="password2" id="password2" required />
+                    <input type="password" {...register('password2')} id="password2" required />
                 </div>
 
 
@@ -53,25 +57,24 @@
                 </div>
                 <div className="input-wrapper">
                     <label htmlFor="age">Edad</label>
-                    <input type="number" name="age" id="age" required/>
+                    <input type="number" {...register('age')} id="age" required/>
                 </div>
 
 
                 <div className="input-wrapper">
                     <label htmlFor="bornDate">Fecha Nacimiento</label>
-                    <input type="date" name="bornDate" id="bornDate" min=" 1930-01-01" required/>
+                    <input type="date" {...register('bornDate')} id="bornDate" min=" 1930-01-01" required/>
                 </div>
 
 
                 <div className="input-wrapper">
                     <label htmlFor="image">Imagen</label>
-                    <input type="search" name="image" id="image" />
-
+                    <input type="search"{...register('image')} id="image" />
                 </div>
                 
                 <div className="active">
                     <label htmlFor="active">Activo</label>
-                    <input type="checkbox" name="active" id="active" />
+                    <input type="checkbox" {...register('active')} id="active" />
                 </div>
                 <button type="submit" className="btn-form">Agregar usuario</button>
 

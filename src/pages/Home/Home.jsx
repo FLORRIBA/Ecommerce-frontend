@@ -1,9 +1,7 @@
-
-
 import Feature from '../../Layout/Feature/Feature'
 import Banner from '../../Layout/Banner/Banner';
-import Cards from '../../components/Cards/Cards';
-
+import ProductCards from '../../components/ProductCards/ProductCards';
+import {ProductCardsContainer} from '../../components/ProductCardsContainer/ProductCardsContainer';
 
 export default function Home() {
     return (
@@ -21,8 +19,9 @@ export default function Home() {
            
 
                 <section className="card-section">
-
-                <Cards/>
+                
+                {/* <ProductCardsContainer /> */}
+               
 
                 </section>
 

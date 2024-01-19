@@ -14,7 +14,7 @@ import AdminRoute from './Guard/AdminRoute/AdminRoute'
 import Header from './Layout/Header/Header'
 import Footer from './Layout/Footer/Footer'
 import LoginPage from './pages/Login/LoginPage'
-import Cards from './components/Cards/Cards'
+import Cards from './components/ProductCards/ProductCards.jsx'
 
 
 
