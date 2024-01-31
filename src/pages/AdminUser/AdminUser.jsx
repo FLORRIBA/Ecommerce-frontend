@@ -1,109 +1,122 @@
-import { useForm } from "react-hook-form" //LIBRERIA DE REACT
- 
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form"; //LIBRERIA DE REACT
+import Swal from "sweetalert2";
+import axios from "axios";
+import UserTable from "../../components/UserTable/UserTable";
+import UserForm from "../../components/UserForm/UserForm";
+import {useNavigate} from "react-router-dom"
+
+const URL = import.meta.env.VITE_SERVER_URL;
+const TOKEN = localStorage.getItem("token");
+
 export default function AdminUser() {
-    const {register, handleSubmit,watch} = useForm();
-    function submitedData (data){
-   
-    }
+// State to hold the user data *-Usamos el useStategancho para crear una variable de estado dbUsers y una función setDbUserspara actualizarla.
+	const [dbUsers, setDbUsers ] = useState([]); //Estado() inicializado como un array vacio.	
+	const [userId, setUserId]=useState() //deshabilitar el Password al editar
+	const navigate=useNavigate()
 
-    return(
-  <>
-  
-    <main>
+	async function deleteUser(id) {
+		Swal.fire({
+			title: "Confirma borrar el usuario",
+			text: `Realmente desea borrar el usuario ${id}`,
+			icon: "warning",
+			showDenyButton: true,
+			confirmButtonText: "Borrar",
+			confirmButtonColor: "#e06262" ,
+			denyButtonText: `Cancelar`,
+			reverseButtons: true,// invertir botones borrar y cancelar
+		}).then(async function (resultado) {
+			//cuando la persona "confirmo"
+			if (resultado.isConfirmed) {
+				try {
+					
+					if (!TOKEN) return;
+					//-Borrar usuario en la BD
+					await axios.delete(`${URL}/users/${id}`, {
+						headers: { authorization: TOKEN }, //objeto opciones, tiene la propiedad header{}
+					});
+					Swal.fire({
+						icon: "success",
+						title: "Usuario borrado",
+						text: `El ususario ${id} fue borrado correctamente`,
+					});
+				//-Actualizar el estado de usuarios
+					getUsers();
 
-    <div className="input-container  input-wrapper">
-        <input type="text" className="input" id="search" placeholder="Buscar por nombre"/>
-    </div>
+				} catch (error) {
+					console.log(error);
+					Swal.fire({
+						icon: "error",
+						title: "Error al borrar el usuario",
+						text: `No se pudo borrar el usuario ${id}`,
+					});
+					if(error.response.status===401) return logout()
+				}
+			} //cierra if
+		}); //cierra then
+	} 
+	function logout(){	
+			localStorage.removeItem("currentUser");
+			localStorage.removeItem("token");
+			navigate("/");
+		
+	}
 
+	//-Obtener Usuarios
+	async function getUsers() {
+		try {
+			const response = await axios.get(`${URL}/users`);
+			const users = response.data.users;
 
-    <div className="admin-container">
+			setDbUsers(users);
+		} catch (error) {
+			console.log(error);
+			Swal.fire({
+				icon: "error",
+				title: "No se pudieron obtener los usuario",
+			});
+		}
+	}
+	
+	useEffect(function () {
+		//controlo la carga de usuario
+		getUsers();
+		//prevengo el bucle infinito
+	}, []);
 
-        <section className="form-container">
-            <form id="user-form"onSubmit= {handleSubmit(submitedData)}>
-                <input type="hidden" name="id"/>
+	const { setValue } = useForm();
 
-                <div className="input-wrapper">
-                    <label htmlFor="fullname">Nombre Completo</label>
-                    <input type="text" {...register('fullname')} id="fullname" minLength="5" maxLength="60" requiered
-                        pattern="^[a-zA-Z]+( [a-zA-Z]+)*$" autoFocus />
-                </div>
-                <div className="input-wrapper">
-                    <label htmlFor="email">E-mail</label>
-                    <input type="email" {...register('email')} id="email" minLength="6" maxLength="140" required
-                        pattern="[a-zA-Z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" />
-                </div>
-                <div className="input-wrapper">
-                    <label htmlFor="password">Contraseña</label>
-                    <input type="password" {...register('password')} id="password" required />
-                </div>
+	 function setFormValue(user){
+		console.log(user)
+		//iteramos propiedades
+		setValue("name", user.name)
+		setValue("email", user.email)
+		setUserId(user._id), //ocultar la contraseña
+		setValue("location", user.location)
+		setValue("age", user.age)
+		setValue("image", user.image || "" )
+		
+	}
 
-                <div className="input-wrapper">
-                    <label htmlFor="password2">Repetir contraseña</label>
-                    <input type="password" {...register('password2')} id="password2" required />
-                </div>
-
-
-                <div className="input-wrapper">
-                    <label htmlFor="location">Localidad</label>
-                    <select name="location" id="location" required>
-                        <option value=""></option>
-                        <option value="Buenos Aires">Buenos Aires</option>
-                        <option value="Mendoza">Mendoza</option>
-                        <option value="San Luis">San Luis</option>
-                        <option value="Cordoba">Cordoba</option>
-                        <option value="La Pampa">La Pampa</option>
-                        <option value="Rosario">Rosario</option>
-                    </select>
-                </div>
-                <div className="input-wrapper">
-                    <label htmlFor="age">Edad</label>
-                    <input type="number" {...register('age')} id="age" required/>
-                </div>
-
-
-                <div className="input-wrapper">
-                    <label htmlFor="bornDate">Fecha Nacimiento</label>
-                    <input type="date" {...register('bornDate')} id="bornDate" min=" 1930-01-01" required/>
-                </div>
-
-
-                <div className="input-wrapper">
-                    <label htmlFor="image">Imagen</label>
-                    <input type="search"{...register('image')} id="image" />
-                </div>
-                
-                <div className="active">
-                    <label htmlFor="active">Activo</label>
-                    <input type="checkbox" {...register('active')} id="active" />
-                </div>
-                <button type="submit" className="btn-form">Agregar usuario</button>
-
-            </form>
-
-        </section>
-        <section className="table-container">
-            <table className="user-table" id="userTable">
-                <thead>
-                    <tr className="table-head">
-                        <th>Avatar</th>
-                        <th>Nombre Completo</th>
-                        <th>Email</th>
-                        <th>Localidad</th>
-                        <th>Edad</th>
-                        <th>Fecha Nacimiento</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-
-                </tbody>
-            </table>
-        </section>
-    </div>
-</main>
-
-</>
-
-  )
+	return (
+		<>
+			<main>
+				<div className="input-container  input-wrapper">
+					<input
+						type="text"
+						className="input"
+						id="search"
+						placeholder="Buscar por nombre"
+					/>
+				</div>
+				<div className="admin-container">
+					{/*FORMULARIO */}
+					<UserForm getUsers={getUsers} />
+					{/* TABLA */}
+					{/*paso unas props y su valor es la funcion */}
+					<UserTable users={dbUsers} deleteUser={deleteUser} setFormValue={setFormValue} />
+				</div>
+			</main>
+		</>
+	);
 }
-

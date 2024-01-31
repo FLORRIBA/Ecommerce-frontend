@@ -20,7 +20,7 @@ return(
                     <div className="card-container">
                         <div className="card-info">
                             <h2 className="card-info-title">{product.producto} </h2>
-                            <p className="card-info-text">{product.descipcion}
+                            <p className="card-info-text">{product.descripcion}
                             </p>
                         </div>
                         <div className="card-values">

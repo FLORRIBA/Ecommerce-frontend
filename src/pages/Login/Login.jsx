@@ -41,6 +41,7 @@ export default function Login() {
             text:'Sera redireccionado',
             icon:'success',
             timer:1500,
+            confirmButtonColor:'#ffe4c4'
         
            }).then(()=>{
            navigate('/') //redireccionamos al path raiz
@@ -71,70 +72,7 @@ export default function Login() {
                 <input type="password" name="password" id="password" required/>
             </div>
 
-            <button type="submit" className="btn-form"
-                // onClick={()=>{
-                //     const LoginPage = () => {
-  
- 
-                //         const [email, setEmail] = useState('');
-                         
-                //         const [password, setPassword] = useState('');
-                        
-                //           const handleLogin = (evt) => {
-                //             evt.
-                          
-                //         preventDefault();
-                        
-                //             const users = JSON.parse(localStorage.getItem("users")) || [];
-                            
-                            
-                //         const user = users.find((usr) => usr.email.toLowerCase() === email.toLowerCase());
-                        
-                            
-                        
-                         
-                //         if (!user || user.password !== password) {
-                              
-                         
-                //         Swal.fire({
-                        
-                //         title: "Login Incorrecto",
-                //         text: "Datos ingresados incorrectos",
-                //         icon: "error",
-                //         timer: 2000,
-                //               });
-                              
-                //               };
-                             
-                //         return;
-                //             }
-                        
-                //         user.password = undefined;
-                        
-                //         localStorage.setItem("currentUser", JSON.stringify(user));
-                        
-                //         Swal.fire({
-                        
-                //         title: "Login Correcto",
-                //         text: "Sera redireccionado en un momento",
-                //         icon: "success",
-                //         timer: 2000,
-                //             });
-                        
-                //         setTimeout(function () {
-                              
-                              
-                //         window.location.href = "/";
-                //             }, 1500);
-                //           };
-                        
-
-
-                // }}
-
-            
-            
-            >Ingresar</button>
+            <button type="submit" className="btn-form">Ingresar</button>
         </form>
     </div>
 

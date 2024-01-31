@@ -1,16 +1,16 @@
 
 import axios from "axios";
-import { productState, productEffect} from 'react'; 
+import { useState, useEffect} from 'react'; 
 import ProductCards from "../ProductCards/ProductCards";
 // import react from "@vitejs/plugin-react-swc";
 
 
 export const ProductCardsContainer = () =>{
                                  //product inicialmente va a ser un array vacio
-    const [products, setProducts] = productState([]);
+    const [products, setProducts] = useState([]);
 
  //HOOK se ejecuta una function(en base a q..., cuando se actualice q... ) cuando se crea el componente 
-    productEffect(function(){
+    useEffect(function(){
     //controlo la carga de productos
         getProducts()
     //prevengo el bucle infinito
@@ -19,8 +19,8 @@ export const ProductCardsContainer = () =>{
     async function getProducts(){
         try{
             //pedido al backend de los usuarios para pintarlos
-            const response= await axios.get(import.meta.env.VITE_SERVER_URL+'/products' , data)
-            console.log(data)    
+            const response= await axios.get('http://localhost:3000/products')
+            
             //funcion actualizar estado de los productos
             setProducts(response.data.products);         
             console.log(response)
@@ -33,8 +33,9 @@ export const ProductCardsContainer = () =>{
    
     return (
         <>
-        <h1>Lista Productos </h1>
-        <div className='product-container'>
+         <section className="card-section">
+
+        
             {
             products.map(product=>{
                 return(
@@ -44,8 +45,9 @@ export const ProductCardsContainer = () =>{
                 )
             })
             }
-            </div>
+        </section>
         </>
         
     )
 }
+export default ProductCardsContainer

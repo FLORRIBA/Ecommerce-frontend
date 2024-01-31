@@ -18,12 +18,12 @@ export default function Home() {
 
            
 
-                <section className="card-section">
+               
                 
-                {/* <ProductCardsContainer /> */}
+            <ProductCardsContainer /> 
                
 
-                </section>
+               
 
 
          

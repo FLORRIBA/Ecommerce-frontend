@@ -14,13 +14,29 @@
   min-height: 100dvh;
 }
 
-.swal2-confirm{
-  background-color: bisque !important;
+div:where(.swal2-container) button:where(.swal2-styled){
+  background-color: #e06262;
   box-shadow: none !important;
 }
 
 .swal2-success-ring,
 .swal2-x-mark {
-  border-color: bisque !important;
+  border-color: bisque!important;
   color: bisque !important;
+}
+
+.swal2-deny,
+.swal2-styled{
+  color: rgb(14, 13, 13) !important;
+}
+.swal2-deny{
+  background-color: bisque!important;
+
+}
+.defaultPicture{
+  height: 30px;
+  font-weight: 30px;
+}
+.btn-success{
+  background-color: rgb(77, 110, 77) !important;
 }
