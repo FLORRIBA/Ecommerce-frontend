@@ -12,7 +12,8 @@ const TOKEN = localStorage.getItem("token");
 export default function AdminUser() {
 // State to hold the user data *-Usamos el useStategancho para crear una variable de estado dbUsers y una función setDbUserspara actualizarla.
 	const [dbUsers, setDbUsers ] = useState([]); //Estado() inicializado como un array vacio.	
-	const [userId, setUserId]=useState() //deshabilitar el Password al editar
+	// const [userId, setUserId]=useState() //deshabilitar el Password al editar
+	const [formValue, setFormValue] = useState()
 	const navigate=useNavigate()
 
 	async function deleteUser(id) {
@@ -55,6 +56,7 @@ export default function AdminUser() {
 			} //cierra if
 		}); //cierra then
 	} 
+	
 	function logout(){	
 			localStorage.removeItem("currentUser");
 			localStorage.removeItem("token");
@@ -84,17 +86,12 @@ export default function AdminUser() {
 		//prevengo el bucle infinito
 	}, []);
 
-	const { setValue } = useForm();
+	// const { setValue } = useForm();
 
-	 function setFormValue(user){
+	async function setFormValueFn(user){ //esta f le va a "setear"al StateFormValue un  uevo valor que es el usuario que recibio para editar
 		console.log(user)
 		//iteramos propiedades
-		setValue("name", user.name)
-		setValue("email", user.email)
-		setUserId(user._id), //ocultar la contraseña
-		setValue("location", user.location)
-		setValue("age", user.age)
-		setValue("image", user.image || "" )
+		setFormValue(user)
 		
 	}
 
@@ -111,10 +108,10 @@ export default function AdminUser() {
 				</div>
 				<div className="admin-container">
 					{/*FORMULARIO */}
-					<UserForm getUsers={getUsers} />
+					<UserForm getUsers={getUsers} formValue={formValue} />
 					{/* TABLA */}
 					{/*paso unas props y su valor es la funcion */}
-					<UserTable users={dbUsers} deleteUser={deleteUser} setFormValue={setFormValue} />
+					<UserTable users={dbUsers} deleteUser={deleteUser} setFormValueFn={setFormValueFn}  />
 				</div>
 			</main>
 		</>

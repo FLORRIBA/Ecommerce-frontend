@@ -1,43 +1,44 @@
 import React from "react";
-import { useForm} from "react-hook-form"; //LIBRERIA DE REACT
+import { useForm } from "react-hook-form"; //LIBRERIA DE REACT
 import Swal from "sweetalert2";
 import axios from "axios";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const TOKEN = localStorage.getItem("token"); //variable global para mi componente para usar el TOKEN en distintas peticiones.
 const URL = import.meta.env.VITE_SERVER_URL;
-// const userId=useState()
 
 //traigo f getUsers como props desde Adminuser
-const UserForm = ({ getUsers, setFormValue, userId,  setUserId}) => {
+const UserForm = ({ getUsers, formValue }) => {
 	// handleSubmit to hold the input value *- setValue =>setear los valores al formulario
-	const { register, handleSubmit} = useForm();
-	const navigate=useNavigate()
+	const { register, handleSubmit, setValue } = useForm();
+	const navigate = useNavigate();
+	const [userId, setUserId] = useState();
 
-//-Obtener data del formulario y hacer un PUT o POST	
+	//-Obtener data del formulario y hacer un PUT o POST
 	async function submitedData(data) {
-		try {
-    	//-PUT: EDITAR usuario	
-			if(userId){
-				if(!TOKEN) return; //si NO HAY TOKEN cancelo
-				 		 		             //metodo PUT ()Postman
-				const response=await axios.put(`${URL}/users/ ${userId}`, data, {
-					headers:{authorization: TOKEN}
-				})
+		try  {
+			//-PUT: EDITAR usuario
+			if (userId) {
+				if (!TOKEN) return; //si NO HAY TOKEN cancelo
+				//metodo PUT ()Postman
+				const response = await axios.put(`${URL}/users/ ${userId}`, data, {
+					headers: { authorization: TOKEN },
+				});
 				Swal.fire({
 					icon: "success",
 					title: "Usuario editado correctamente ",
 					text: `El usuario ${response.data.user.name} fue editado correctamente`,
 				});
-				if (getUsers) {
-					getUsers();
-				}
+				
+				// if (setFormValueFn) {
+				// 	setFormValueFn(user);
+				// }
 				setUserId(null);
 				return; //para que mi codigo que sigue luego del if no se ejecute.
 			}
-			
-		//-POST: CREAR usuario
+
+			//-POST: CREAR usuario
 			const response = await axios.post(`${URL}/users`, data); //enviamos al back
 			Swal.fire({
 				icon: "success",
@@ -47,13 +48,11 @@ const UserForm = ({ getUsers, setFormValue, userId,  setUserId}) => {
 
 			/*condicional:
 			-AdminUser=> solo obtener usuarios(recargar la TABLA) cuando a mi componente getUsers le mandemos la props como en AdminUser <UserForm getUsers={getUsers} /> 
-			-Register => no se lo enviamos, getUser es UNDEFINED no entra al if y no llama a la TABLA	*/		
+			-Register => no se lo enviamos, getUser es UNDEFINED no entra al if y no llama a la TABLA	*/
 			if (getUsers) {
 				getUsers();
 			}
-			if(setFormValue){
-				setFormValue(user);
-			}
+
 		} catch (error) {
 			console.log(error);
 			Swal.fire({
@@ -61,7 +60,7 @@ const UserForm = ({ getUsers, setFormValue, userId,  setUserId}) => {
 				title: "No se creo usuario",
 				text: "Algunos datos ingresados no son correctos",
 			});
-			if(error.response.status===401){
+			if (error.response.status === 401) {
 				//logout()
 				localStorage.removeItem("currentUser");
 				localStorage.removeItem("token");
@@ -70,6 +69,14 @@ const UserForm = ({ getUsers, setFormValue, userId,  setUserId}) => {
 		}
 	}
 
+	if (formValue) {
+		setValue("name", formValue.name);
+		setValue("email", formValue.email);
+		setValue("password", formValue.password);
+		setValue("location", formValue.location);
+		setValue("age", formValue.age);
+		setValue("image", formValue.image);
+	}
 
 	return (
 		<>
@@ -106,7 +113,7 @@ const UserForm = ({ getUsers, setFormValue, userId,  setUserId}) => {
 							type="password"
 							{...register("password")} //user.model-backend
 							id="password"
-							disabled={userId}//cuando se esta editando deshabilito la contraseña.
+							disabled={userId} //cuando se esta editando deshabilito la contraseña.
 							required
 						/>
 					</div>
@@ -159,13 +166,10 @@ const UserForm = ({ getUsers, setFormValue, userId,  setUserId}) => {
 						<label htmlFor="active">Activo</label>
 						<input type="checkbox" {...register("active")} id="active" />
 					</div>
-					<button type="submit"
-					 
-					 className={userId? "btn-success": "btn-form"}	>
-					 {
-						userId ? "Editar usuario" : "Agregar Usuario" //existe id Editar, no existe Añadir
-					 }
-				
+					<button type="submit" className={userId ? "btn-success" : "btn-form"}>
+						{
+							userId ? "Editar usuario" : "Agregar Usuario" //existe id Editar, no existe Añadir
+						}
 					</button>
 				</form>
 			</section>

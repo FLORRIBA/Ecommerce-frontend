@@ -3,7 +3,8 @@ import { useNavigate, NavLink } from "react-router-dom";
 import logo from '../../assets/images/logos/LOGO.png'
 import carrito from "../../assets/images/user-menu/carrito4.png" 
 import usuario from "../../assets/images/user-menu/usuario2.png"
-import LoginPage from '../../pages/Login/LoginPage'
+// import LoginPage from '../../pages/Login/LoginPage'
+
 
 
 export default function Header() {
@@ -58,15 +59,15 @@ export default function Header() {
         <div className="user-action"></div>
         
         {currentUser?(
-         <NavLink className="header-link" onClick ={() => logout()}>Logout </NavLink> //si tengo current User pinto boton logout
+         <NavLink className="header-link" onClick ={() => logout()}>Logout
+        {/* <img src={usuario} className="cart-user" alt="user.img" /> */}
+        </NavLink> //si tengo current User pinto boton logout
         ) : (
-        <NavLink to='/login' className="user  user-name" 
-            
-            > <img src={usuario} className="cart-user" alt="user.img" /></NavLink> //sino tengo pinto boton login
+        <NavLink to='/login' className="user  user-name" > 
+        <img src={usuario} className="cart-user" alt="user.img" />
+        </NavLink> //sino tengo pinto boton login
         )}
-
-            {/* <img src={usuario} className="cart-user" alt="user.img" /> */}
-    
+   
       
 </div>
 
