@@ -4,17 +4,16 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import UserTable from "../../components/UserTable/UserTable";
 import UserForm from "../../components/UserForm/UserForm";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 const URL = import.meta.env.VITE_SERVER_URL;
-const TOKEN = localStorage.getItem("token");
 
 export default function AdminUser() {
-// State to hold the user data *-Usamos el useStategancho para crear una variable de estado dbUsers y una función setDbUserspara actualizarla.
-	const [dbUsers, setDbUsers ] = useState([]); //Estado() inicializado como un array vacio.	
-	// const [userId, setUserId]=useState() //deshabilitar el Password al editar
-	const [formValue, setFormValue] = useState()
-	const navigate=useNavigate()
+	// State to hold the user data *-Usamos el useStategancho para crear una variable de estado dbUsers y una función setDbUserspara actualizarla.
+	const [dbUsers, setDbUsers] = useState([]); //Estado() inicializado como un array vacio.
+	const [userId, setUserId] = useState(); //deshabilitar el Password al editar
+	const [formValue, setFormValue] = useState();
+	const navigate = useNavigate();
 
 	async function deleteUser(id) {
 		Swal.fire({
@@ -23,45 +22,46 @@ export default function AdminUser() {
 			icon: "warning",
 			showDenyButton: true,
 			confirmButtonText: "Borrar",
-			confirmButtonColor: "#e06262" ,
+			confirmButtonColor: "#e06262",
 			denyButtonText: `Cancelar`,
-			reverseButtons: true,// invertir botones borrar y cancelar
+			// reverseButtons: true, // invertir botones borrar y cancelar
 		}).then(async function (resultado) {
-			//cuando la persona "confirmo"
 			if (resultado.isConfirmed) {
 				try {
-					
-					if (!TOKEN) return;
+					const token = localStorage.getItem("token");
+					if (!token) return; //token guardado en el localStorage
+					console.log(`usuario a borrar ${id}`);
 					//-Borrar usuario en la BD
 					await axios.delete(`${URL}/users/${id}`, {
-						headers: { authorization: TOKEN }, //objeto opciones, tiene la propiedad header{}
+						headers: { authorization: token }, //objeto opciones, tiene la propiedad header{}
 					});
+
 					Swal.fire({
 						icon: "success",
 						title: "Usuario borrado",
-						text: `El ususario ${id} fue borrado correctamente`,
+						text: `El ususario ${id}fue borrado correctamente`,
+						timer: 1500,
 					});
-				//-Actualizar el estado de usuarios
+
+					//-Actualizar el estado de usuarios
 					getUsers();
 
 				} catch (error) {
-					console.log(error);
 					Swal.fire({
 						icon: "error",
 						title: "Error al borrar el usuario",
 						text: `No se pudo borrar el usuario ${id}`,
 					});
-					if(error.response.status===401) return logout()
+					if (error.response.status === 401) return logout();
 				}
 			} //cierra if
 		}); //cierra then
-	} 
-	
-	function logout(){	
-			localStorage.removeItem("currentUser");
-			localStorage.removeItem("token");
-			navigate("/");
-		
+	} //cierro funcion delete
+
+	function logout() {
+		localStorage.removeItem("currentUser");
+		localStorage.removeItem("token");
+		navigate("/");
 	}
 
 	//-Obtener Usuarios
@@ -79,7 +79,7 @@ export default function AdminUser() {
 			});
 		}
 	}
-	
+
 	useEffect(function () {
 		//controlo la carga de usuario
 		getUsers();
@@ -88,30 +88,66 @@ export default function AdminUser() {
 
 	// const { setValue } = useForm();
 
-	async function setFormValueFn(user){ //esta f le va a "setear"al StateFormValue un  uevo valor que es el usuario que recibio para editar
-		console.log(user)
+	async function setFormValueFn(user) {
+		//esta f le va a "setear"al StateFormValue un nuevo valor que es el usuario que recibio para editar
+		console.log(user);
 		//iteramos propiedades
-		setFormValue(user)
-		
+		setFormValue(user);
+		setUserId(user._id);
 	}
+
+	async function handleSearch(e){
+		try{
+			const search=e.target.value;
+		if(!search) getUsers();//si mi input quedo vacio (""), que me traiga todos los usuarios
+		if(search.length<=3) return; //que busque solo a partir de 3 letras
+		const response=await axios.get(`${URL}/users/search/${search}`)	
+		const users=response.data.users;
+	
+		setDbUsers(users);//actualizamos los usuarios
+	
+		}catch(error){
+			console.log(error)
+		}
+	
+	}
+	
 
 	return (
 		<>
 			<main>
-				<div className="input-container  input-wrapper">
+				{/* <div className="input-container  input-wrapper">
 					<input
 						type="text"
 						className="input"
 						id="search"
 						placeholder="Buscar por nombre"
 					/>
-				</div>
+				</div> */}
 				<div className="admin-container">
 					{/*FORMULARIO */}
-					<UserForm getUsers={getUsers} formValue={formValue} />
+					<UserForm
+						getUsers={getUsers}
+						formValue={formValue}
+						userId={userId}
+						setUserId={setUserId}
+					/>
 					{/* TABLA */}
+					<section className="table-container">
+					<div className="flex-between">
+							{/* <h2>Tabla de Productos</h2> */}
+							<div className="input-group">
+							<input type="text" className="input-search" id="search" placeholder="Buscar por nombre" onKeyUp={handleSearch} />
+							</div>	
+						</div>
 					{/*paso unas props y su valor es la funcion */}
-					<UserTable users={dbUsers} deleteUser={deleteUser} setFormValueFn={setFormValueFn}  />
+					<UserTable
+						users={dbUsers}
+						deleteUser={deleteUser}
+						setFormValueFn={setFormValueFn}
+						handleSearch={handleSearch}
+					/>
+					</section>
 				</div>
 			</main>
 		</>

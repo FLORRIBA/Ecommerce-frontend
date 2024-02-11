@@ -9,50 +9,50 @@ const TOKEN = localStorage.getItem("token"); //variable global para mi component
 const URL = import.meta.env.VITE_SERVER_URL;
 
 //traigo f getUsers como props desde Adminuser
-const UserForm = ({ getUsers, formValue }) => {
+const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 	// handleSubmit to hold the input value *- setValue =>setear los valores al formulario
 	const { register, handleSubmit, setValue } = useForm();
 	const navigate = useNavigate();
-	const [userId, setUserId] = useState();
+	
 
 	//-Obtener data del formulario y hacer un PUT o POST
-	async function submitedData(data) {
-		try  {
+	async function submitedData(data) {		
+		try {
+			const formData=new FormData();
+			for(const key of Object.keys(data)){//-for Itero propiedades, que me va a devolver un array con los valores(propiedades) de mi objeto
+				if(key=='image'){
+					formData.append(key, data.image[0]) //para que me mi lista de archivos tome el indice 0
+					continue;
+				}
+				formData.append(key, data.key)
+			}
+
 			//-PUT: EDITAR usuario
-			if (userId) {
+			if (userId) {		
 				if (!TOKEN) return; //si NO HAY TOKEN cancelo
-				//metodo PUT ()Postman
-				const response = await axios.put(`${URL}/users/ ${userId}`, data, {
-					headers: { authorization: TOKEN },
-				});
+				//metodo PUT ()Postman			
+				const response = await axios.put(`${URL}/users/${userId}`,formData, {headers: { authorization: TOKEN },});						
 				Swal.fire({
 					icon: "success",
 					title: "Usuario editado correctamente ",
 					text: `El usuario ${response.data.user.name} fue editado correctamente`,
-				});
-				
-				// if (setFormValueFn) {
-				// 	setFormValueFn(user);
-				// }
+				});				
 				setUserId(null);
 				return; //para que mi codigo que sigue luego del if no se ejecute.
 			}
-
 			//-POST: CREAR usuario
-			const response = await axios.post(`${URL}/users`, data); //enviamos al back
+			const response = await axios.post(`${URL}/users`, formData); //enviamos al back
 			Swal.fire({
 				icon: "success",
 				title: "Usuario creado ",
-				text: `El usuario ${response.data.user.name} fue creado correctamente`,
+				text: `El usuario ${response.data.user?.name} fue creado correctamente`,
 			});
-
 			/*condicional:
 			-AdminUser=> solo obtener usuarios(recargar la TABLA) cuando a mi componente getUsers le mandemos la props como en AdminUser <UserForm getUsers={getUsers} /> 
 			-Register => no se lo enviamos, getUser es UNDEFINED no entra al if y no llama a la TABLA	*/
 			if (getUsers) {
 				getUsers();
 			}
-
 		} catch (error) {
 			console.log(error);
 			Swal.fire({
@@ -73,15 +73,15 @@ const UserForm = ({ getUsers, formValue }) => {
 		setValue("name", formValue.name);
 		setValue("email", formValue.email);
 		setValue("password", formValue.password);
-		setValue("location", formValue.location);
+		setValue("location", formValue.location || "");
 		setValue("age", formValue.age);
-		setValue("image", formValue.image);
+		setValue("image", formValue.image || "");
 	}
 
 	return (
 		<>
 			<section className="form-container">
-				<form id="user-form" onSubmit={handleSubmit(submitedData)}>
+				<form id="user-form" onSubmit={handleSubmit(submitedData)} encType="multipart/form-data">
 					<div className="input-wrapper">
 						<label htmlFor="name">Nombre Completo</label>
 						<input
@@ -108,12 +108,12 @@ const UserForm = ({ getUsers, formValue }) => {
 						/>
 					</div>
 					<div className="input-wrapper">
-						<label htmlFor="password">Contraseña</label>
+						<label htmlFor="password" >Contraseña</label>
 						<input
 							type="password"
 							{...register("password")} //user.model-backend
 							id="password"
-							disabled={userId} //cuando se esta editando deshabilito la contraseña.
+							disabled={!!userId} //cuando se esta editando deshabilito la contraseña.
 							required
 						/>
 					</div>
@@ -159,14 +159,18 @@ const UserForm = ({ getUsers, formValue }) => {
 
 					<div className="input-wrapper">
 						<label htmlFor="image">Imagen</label>
-						<input type="search" {...register("image")} id="image" />
+						<input type="file" 
+								accept="image/*" //mostrar archivos de tipo imagen
+								{...register("image")} id="image" />
 					</div>
 
 					<div className="active">
 						<label htmlFor="active">Activo</label>
 						<input type="checkbox" {...register("active")} id="active" />
 					</div>
-					<button type="submit" className={userId ? "btn-success" : "btn-form"}>
+					<button type="submit" 
+					className={userId ? "btn-success" : "btn-form"}>
+						
 						{
 							userId ? "Editar usuario" : "Agregar Usuario" //existe id Editar, no existe Añadir
 						}

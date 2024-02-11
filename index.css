@@ -5,7 +5,23 @@
 }
 
 :root {
-  font-family: 'Roboto', sans-serif;
+    --font-family: 'Roboto', sans-serif;
+    --primary-color: #f0e8e0;
+    --primary-color-transp: #f0e8e08e;
+    --secondary-color: #382f28;
+    --secondary-color-dark: #221d19;
+    --terra-color: #9d776d;
+    --terra-color-dark: #856760;
+    --third-color: #cebeaf;
+    --text-light: #e8d9ca;
+    --light-transparency: #e8d9ca98;
+    --light-more-transparency: #e8d9ca54;
+    --box-shadow: 5px 1px 5px #e8d9ca;
+    --font: "Open Sans", sans-serif;
+    --font-secondary: "victor";
+    --font-poppins: "Poppins", sans-serif;
+    --font-pacifico: "Pacifico", cursive;
+  
 }
 
 #root {
@@ -37,6 +53,39 @@ div:where(.swal2-container) button:where(.swal2-styled){
   height: 30px;
   font-weight: 30px;
 }
-.btn-success{
-  background-color: rgb(77, 110, 77) !important;
+
+.pagination-container{
+  margin: 5rem 2rem ;
+  width: 100%;
+  button{
+    padding: 1rem;
+    margin: 0.5rem;
+    border:1px solid bisque;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: #856760;
+    cursor: pointer;
+    
+  }
+}
+.flex-between{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left:2rem;
+    input{
+      width: 350px;
+      height: 50px;
+      background-color: var(--primary-color-transp);
+      font-size: 1rem;
+      outline: none;
+      border: none;
+      padding: 1.5rem;
+      border-radius: 10px 5px;
+     
+    }
+  /* margin-top: 8rem;
+  margin-left: 6rem;
+ */
+
 }

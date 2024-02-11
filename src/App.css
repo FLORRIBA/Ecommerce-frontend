@@ -726,6 +726,19 @@ button:hover {
   cursor: pointer;
   border: none;
 }
+.btn-success{
+  box-shadow: var(--box-shadow);
+  color: var(--third-color);
+  background-color: rgb(115, 146, 115)!important;
+  margin-left: 1rem;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  font-weight: 300;
+  padding: 1rem 0.75rem;
+  border-radius: 3px;
+  cursor: pointer;
+  border: none;
+}
 /*================Header======================*/
 
 .header-link {
@@ -830,6 +843,7 @@ margin-left:0.5rem;
   padding: 2rem;
   width: 900px;
   border-collapse: collapse;
+  overflow-y: scroll;
 }
 @media screen and (width<768px) {
   .user-table {

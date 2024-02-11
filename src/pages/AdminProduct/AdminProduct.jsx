@@ -3,54 +3,68 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import defaultPicture from "../../assets/images/avatar/usuario.jpg"
+import defaultPicture from "../../assets/images/avatar/usuario.jpg";
 
 const URL = import.meta.env.VITE_SERVER_URL;
-const TOKEN = localStorage.getItem("token");
 
-export default function AdminProduct({products}) {
-	const { register, handleSubmit} = useForm();
+export default function AdminProduct() {
+	const { register, handleSubmit, setValue } = useForm();
 	// State to hold the product data *-Usamos el useStategancho para crear una variable de estado dbproducts y una función setDbUserspara actualizarla.
 	const [dbProducts, setDbProducts] = useState([]); //Estado() inicializado como un array vacio.
-	const [productId, setProductId] = useState([]); //deshabilitar el Password al editar
+	const [productId, setProductId] = useState(); //deshabilitar el Password al editar
 	const [categories, setCategories] = useState([]);
-	// const [formValue, setFormValue] = useState();
+	const [totalButtons, setTotalButtons] = useState([]);
+	const [limit, setLimit] = useState(2);
 	const navigate = useNavigate();
+	const TOKEN = localStorage.getItem("token");
 
 	//-Enviar datos(data) al back con body de la request POST y llamar al endpoint POST /products
 	async function submitedData(data) {
 		try {
-			//-PUT: EDITAR producto
+			const formData = new FormData(); //armar a traves de una  req.un formulario y enviado con metodo POST
+			formData.append("producto", data.producto);
+			formData.append("descripcion", data.descripcion);
+			formData.append("precio", data.precio);
+			formData.append("fecha", data.fecha);
+			formData.append("image", data.image[0]);
+
+			// lo de arriba es === a lo de abajo
+
+			// for(const key of Object.keys(data)){//-for Itero propiedades, que me va a devolver un array con los valores(propiedades) de mi objeto
+			// 	if(key=='image'){
+			// 		formData.append(key, data.image[0]) //para que me mi lista de archivos tome el indice 0
+			// 		continue;
+			// 	}
+			// 	formData.append(key, data.key)
+			// }
+
+			//-PUT: EDITAR (actualizar )producto
 			if (productId) {
 				if (!TOKEN) return; //si NO HAY TOKEN cancelo
-				//metodo PUT ()Postman
+				console.log(TOKEN);
 				const response = await axios.put(
-					`${URL}/products/ ${productId}`,
-					data,
-					{
-						headers: { authorization: TOKEN },
-					},
+					`${URL}/products/${productId}`,
+					formData,
+					{ headers: { authorization: TOKEN } },
 				);
 				Swal.fire({
 					icon: "success",
-					title: "producto editado correctamente ",
-					text: `El producto ${response.data.product.name} fue editado correctamente`,
+					title: "Producto editado correctamente ",
+					text: `El producto ${response.data.product?.name} fue editado correctamente`,
 				});
-
+				getProducts();
 				setProductId(null);
 				return; //para que mi codigo que sigue luego del if no se ejecute.
 			}
 
 			//-POST: CREAR producto
-			const response = await axios.post(`${URL}/products`, data); //enviamos al back
-			console.log(response)
-
+			const response = await axios.post(`${URL}/products`, formData); //enviamos al back
+			// console.log(response);
 			Swal.fire({
 				icon: "success",
-				title: "producto creado ",
+				title: "Producto creado ",
 				text: `El producto ${response.data.product.name} fue creado correctamente`,
 			});
-
 			getProducts();
 		} catch (error) {
 			console.log(error);
@@ -67,13 +81,26 @@ export default function AdminProduct({products}) {
 			}
 		}
 	}
-	
+
 	//-Obtener Usuarios
-	async function getProducts() {
+	//valor de page si no recibo nada es 0
+	async function getProducts(page = 0) {
 		try {
-			const response = await axios.get(`${URL}/products`);
+			//bsck le mando queryparams :page, limit
+			const response = await axios.get(
+				`${URL}/products?pages=${page}&limit=${limit}`,
+			);
 			const products = response.data.products;
-			console.log(products)
+			const total = response.data.total; //6
+			//redondeo hacia arriba
+			const buttonsQuantity = Math.ceil(total / limit); //6/2=3 botones
+
+			const arrayButtons = []; //itero en el template de react
+			for (let i = 0; i < buttonsQuantity; i++) {
+				arrayButtons.push(i);
+			}
+
+			setTotalButtons(arrayButtons);
 
 			setDbProducts(products);
 		} catch (error) {
@@ -96,10 +123,11 @@ export default function AdminProduct({products}) {
 			denyButtonText: `Cancelar`,
 			reverseButtons: true, // invertir botones borrar y cancelar
 		}).then(async function (resultado) {
-			//cuando la persona "confirmo"
 			if (resultado.isConfirmed) {
 				try {
+					// const TOKEN = localStorage.getItem("token");
 					if (!TOKEN) return;
+					// console.log(`usuario a borrar ${id}`);
 					//-Borrar Productos en la BD
 					await axios.delete(`${URL}/products/${id}`, {
 						headers: { authorization: TOKEN }, //objeto opciones, tiene la propiedad header{}
@@ -108,11 +136,11 @@ export default function AdminProduct({products}) {
 						icon: "success",
 						title: "Producto borrado",
 						text: `El producto ${id} fue borrado correctamente`,
+						timer: 1500,
 					});
 					//-Actualizar el estado de Productos
 					getProducts();
 				} catch (error) {
-					console.log(error);
 					Swal.fire({
 						icon: "error",
 						title: "Error al borrar el producto",
@@ -130,55 +158,79 @@ export default function AdminProduct({products}) {
 		navigate("/");
 	}
 
-	useEffect(function () {
-		//controlo la carga de usuario
-		getProducts();
-		getCategories();
-		//prevengo el bucle infinito
-	}, []);
+	useEffect(
+		function () {
+			//controlo la carga de usuario
+			getProducts();
+			getCategories();
+			//prevengo el bucle infinito
+		},
+		[limit],
+	); //cuando el limite se actualice vuelva a llamar a getProducts
 
+	async function getCategories() {
+		try {
+			const response = await axios.get("http://localhost:3000/categories");
+			const categoriesDB = response.data.categories;
+			// console.log(response);
 
-	async function getCategories(){
-		try{
-			const response = await axios.get('http://localhost:3000/categories')
-			const categoriesDB=response.data.categories;
-			console.log(response)
-			
 			// setear un estado que maneje las categorias RECIBIDAS DE BD
 			setCategories(categoriesDB);
-
-		}catch (error){
-			console.log('No se pudieron obtener las categorias')
+		} catch (error) {
+			console.log("No se pudieron obtener las categorias");
 		}
 	}
 
-
 	function setFormValue(product) {
-		setValue("product", product.producto);
-		setValue("description", product.descripcion);
-		setValue("price", product.precio);
-		setValue("date", product.fecha);
-		setValue("image", product.image);
+		//iteramos propiedades de los objetos
+		console.log(product);
+		setProductId(product._id);
+		setValue("producto", product.producto);
+		setValue("descripcion", product.descripcion);
+		setValue("precio", product.precio);
+		// setValue("fecha", product.fecha);
+		setValue("image", product.image || ""); //si es null or undefined que se setee un string vacio
 		setValue("active", product.active);
-		setValue("category", product.category);
+		setValue("category", product.category || "");
+		// setFormValue(product);
+		// setUserId(product._id);
+	}
+
+	//-Buscador (Peticion) a mi servidor para buscar productos
+	async function handleSearch(e) {
+		try {
+			const search = e.target.value;
+			if (!search) getProducts(); //si mi input quedo vacio (""), que me traiga todos los productos
+			if (search.length <= 3) return; //que busque solo a partir de 3 letras
+			const response = await axios.get(`${URL}/products/search/${search}`);
+			const products = response.data.products;
+
+			setDbProducts(products); //actualizamos los productos
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	return (
 		<>
 			<main>
-				<div className="input-container  input-wrapper">
+				{/* <div className="input-container  input-wrapper">
 					<input
 						type="text"
 						className="input"
 						id="search"
 						placeholder="Buscar por nombre"
 					/>
-				</div>
+				</div> */}
 
 				<div className="admin-container">
 					<section className="form-container">
 						{/* Formulario de carga de productos / /*cuando se llama al submit = enviale data a la funcion*/}
-						<form id="user-form" onSubmit={handleSubmit(submitedData)}>
+						<form
+							id="user-form"
+							onSubmit={handleSubmit(submitedData)}
+							encType="multipart/form-data"
+						>
 							<div className="input-wrapper">
 								<label htmlFor="producto">Producto</label>
 								<input
@@ -219,7 +271,12 @@ export default function AdminProduct({products}) {
 							</div>
 							<div className="input-wrapper">
 								<label htmlFor="image">Imagen</label>
-								<input type="url" {...register("image")} id="image" />
+								<input
+									type="file" //-Upload type=file
+									accept="image/*" //mostrar archivos de tipo imagen
+									{...register("image")}
+									id="image"
+								/>
 							</div>
 							<div className="active">
 								<label htmlFor="active">Activo</label>
@@ -229,8 +286,7 @@ export default function AdminProduct({products}) {
 							<div className="input-wrapper" {...register("category")}>
 								<label htmlFor="category">Categoria</label>
 								<select name="category" id="category">
-									{
-										categories.map((category)=>(
+									{categories.map((category) => (
 										<option key={category._id} value={category._id}>
 											{category.name}
 										</option>
@@ -238,14 +294,31 @@ export default function AdminProduct({products}) {
 								</select>
 							</div>
 
-							<button type="submit" className="btn-form">
-								Agregar Producto
+							<button
+								type="submit"
+								className={productId ? "btn-success" : "btn-form"}
+							>
+								{
+									productId ? "Editar producto" : "Agregar producto" //existe id Editar, no existe Añadir
+								}
 							</button>
 						</form>
 					</section>
 
-					{/* Tabla con mis productos para manejar el CRUD de los mismos */}
+					{/* TABLA */}
 					<section className="table-container">
+						<div className="flex-between">
+							{/* <h2>Tabla de Productos</h2> */}
+							<div className="input-group">
+								<input
+									type="text"
+									className="input-search"
+									id="search"
+									placeholder="Buscar por nombre"
+									onKeyUp={handleSearch}
+								/>
+							</div>
+						</div>
 						<table className="user-table" id="userTable">
 							<thead>
 								<tr className="table-head">
@@ -258,46 +331,62 @@ export default function AdminProduct({products}) {
 								</tr>
 							</thead>
 							<tbody id="table-body">
+								{dbProducts.map((product) => (
+									<tr key={product._id}>
+										<td>
+											<img
+												className="defaultPicture"
+												src={product.image ? product.image : defaultPicture}
+											/>
+										</td>
+										<td> {product.producto} </td>
+										<td> {product.descripcion} </td>
+										<td> {product.precio}</td>
+										<td> {product.fecha} </td>
 
-							{		
-									products.map((product) => (
-									
-										<tr key={product._id}>
-									
-											<td>
-												<img
-													className="defaultPicture"
-													src={product.image ? product.image : defaultPicture}
-												/>
-											</td>
-											<td> {product.producto} </td>
-											<td> {product.descripcion} </td>
-											<td> {product.precio}</td>
-											<td> {product.fecha} </td>
-											
-											<td>
-												<button
-													className="action-btn btn-danger"
-													onClick={() => deleteProduct(product._id)}
-													title="Borrar producto"
-												>
-													<i className="fa-solid fa-trash-can"></i>
-												</button>
-												
-												<button
-													className="action-btn btn-edit"
-													onClick={() => setFormValue(product)}
-													title="Editar producto"
-												>
-													<i className="fa-solid fa-pen-to-square"></i>
-												</button>
-											</td>
-										</tr>
-									))}
-											
-								
+										<td>
+											<button
+												className="action-btn btn-danger"
+												onClick={() => deleteProduct(product._id)}
+												title="Borrar producto"
+											>
+												<i className="fa-solid fa-trash-can"></i>
+											</button>
+
+											<button
+												className="action-btn btn-edit"
+												onClick={() => setFormValue(product)}
+												title="Editar producto"
+											>
+												<i className="fa-solid fa-pen-to-square"></i>
+											</button>
+										</td>
+									</tr>
+								))}
 							</tbody>
 						</table>
+
+						<div className="pagination-container">
+							{/* {Array.from({length:Math.ceil(total/limit)}).map((_, idx)=>(
+							<button key={idx} onClick={() => getProducts(idx)}> {idx+1} </button>
+						))} */}
+							{/* <button onClick={()=> getProducts(0)}>1</button>
+						<button onClick={()=> getProducts(1)}>2</button>
+						<button onClick={()=> getProducts(2)}>3</button>
+						<button onClick={()=> getProducts(3)}>4</button> */}
+							{totalButtons.map((btnNumber) => (
+								<button key={btnNumber} onClick={() => getProducts(btnNumber)}>
+									{btnNumber + 1}
+								</button>
+							))}
+						</div>
+						<div>
+							<select onChange={(e) => setLimit(e.target.value)}>
+								<option value={2}>2</option>
+								<option value={5}>5</option>
+								<option value={10}>10</option>
+							</select>
+						</div>
 					</section>
 				</div>
 			</main>

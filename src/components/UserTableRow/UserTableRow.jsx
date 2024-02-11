@@ -2,7 +2,7 @@ import React from "react";
 import defaultPicture from "../../assets/images/avatar/usuario.jpg"
 
 
-export default function UserTableRow({ usr, deleteUser, setFormValueFn }) {
+export default function UserTableRow({ usr, deleteUser, setFormValueFn, userId, setUserId }) {
 	
 	return (
 		<>
