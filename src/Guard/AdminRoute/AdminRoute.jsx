@@ -1,4 +1,4 @@
-
+import { useUser } from "@/context/UserContext";
 import { Navigate } from "react-router-dom";
 
 
@@ -6,11 +6,11 @@ import { Navigate } from "react-router-dom";
 export default function AdminRoute({children}) {
 
   //obtuve del localStorage si el usuario es ADMIN-ROLE
-    const isAdmin = true;
- 
+    const {admin}=useUser();
+  
   return (
   //ternario = TRUE=> devuelvo children-admin-product: FALSE lo redirecciono a Home (lo redireccionamos)
-    isAdmin?  children : <Navigate to='/' replace />
+    admin?  children : <Navigate to='/' replace />
    
   )
 

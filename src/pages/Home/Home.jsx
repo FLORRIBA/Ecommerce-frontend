@@ -11,7 +11,7 @@ export default function Home() {
             <Banner />
 
 
-            <main className="main-container   index">
+            <main className="main-container index">
 
                 <h1 className="main-title"> ARMÁ TU REGALO</h1>
                 <div className="line"></div>

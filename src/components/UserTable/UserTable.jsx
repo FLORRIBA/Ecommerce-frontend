@@ -2,7 +2,7 @@ import React from "react";
 import UserTableRow from "../../components/UserTableRow/UserTableRow";
 
 //users=lo recibo como una props
-export default function UserTable({ users, deleteUser, setFormValueFn, userId, setUserId}) {
+export default function UserTable({ users, usr, deleteUser, setFormValueFn, userId, setUserId}) {
 
     // deleteUser('un ID desde el componente hijo UserTable');
 

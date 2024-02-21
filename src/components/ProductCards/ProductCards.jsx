@@ -8,6 +8,7 @@ import hidrolatos from '../../assets/images/cards/hidrolatos.jpg'
 import pasta from '../../assets/images/cards/pasta-dental2.jpg'
 
 import React from 'react'
+import formatDate from '@/utils/formatDate'
 
 export default function ProductCards({product}){
 
@@ -24,7 +25,7 @@ return(
                             </p>
                         </div>
                         <div className="card-values">
-                            <div className="card-date"> {product.fecha} </div>
+                            <div className="card-date"> {formatDate(product.fecha)} </div>
                             <div className="card-price">{product.precio} </div>
                         </div>
 

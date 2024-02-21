@@ -13,30 +13,33 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 	// handleSubmit to hold the input value *- setValue =>setear los valores al formulario
 	const { register, handleSubmit, setValue } = useForm();
 	const navigate = useNavigate();
-	
 
 	//-Obtener data del formulario y hacer un PUT o POST
-	async function submitedData(data) {		
+	async function submitedData(data) {
 		try {
-			const formData=new FormData();
-			for(const key of Object.keys(data)){//-for Itero propiedades, que me va a devolver un array con los valores(propiedades) de mi objeto
-				if(key=='image'){
-					formData.append(key, data.image[0]) //para que me mi lista de archivos tome el indice 0
+			//formData-(Image:FileList [0]) nueva clase que permite manejar req y armar un formulario de datos que va a ser enviado a traves del metodo POST
+			const formData = new FormData(); //data de formulario
+			for (const key of Object.keys(data)) {
+				//-for Itero propiedades, que me va a devolver un array con los valores(propiedades) de mi objeto
+				if (key == "image") {
+					formData.append(key, data.image[0]); //para que me mi lista de archivos tome el indice 0
 					continue;
 				}
-				formData.append(key, data.key)
+				formData.append(key, data[key]);
 			}
 
 			//-PUT: EDITAR usuario
-			if (userId) {		
+			if (userId) {
 				if (!TOKEN) return; //si NO HAY TOKEN cancelo
-				//metodo PUT ()Postman			
-				const response = await axios.put(`${URL}/users/${userId}`,formData, {headers: { authorization: TOKEN },});						
+				//metodo PUT ()Postman
+				const response = await axios.put(`${URL}/users/${userId}`, formData, {
+					headers: { authorization: TOKEN },
+				});
 				Swal.fire({
 					icon: "success",
 					title: "Usuario editado correctamente ",
-					text: `El usuario ${response.data.user.name} fue editado correctamente`,
-				});				
+					text: `El usuario ${response.data.user?.name} fue editado correctamente`,
+				});
 				setUserId(null);
 				return; //para que mi codigo que sigue luego del if no se ejecute.
 			}
@@ -81,7 +84,11 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 	return (
 		<>
 			<section className="form-container">
-				<form id="user-form" onSubmit={handleSubmit(submitedData)} encType="multipart/form-data">
+				<form
+					id="user-form"
+					onSubmit={handleSubmit(submitedData)}
+					encType="multipart/form-data"
+				>
 					<div className="input-wrapper">
 						<label htmlFor="name">Nombre Completo</label>
 						<input
@@ -108,7 +115,7 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 						/>
 					</div>
 					<div className="input-wrapper">
-						<label htmlFor="password" >Contraseña</label>
+						<label htmlFor="password">Contraseña</label>
 						<input
 							type="password"
 							{...register("password")} //user.model-backend
@@ -117,16 +124,6 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 							required
 						/>
 					</div>
-
-					{/* <div className="input-wrapper">
-								<label htmlFor="password2">Repetir contraseña</label>
-								<input
-									type="password"
-									{...register("password2")}
-									id="password2"
-									required
-								/>
-							</div> */}
 
 					<div className="input-wrapper">
 						<label htmlFor="location">Localidad</label>
@@ -146,31 +143,21 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 						<input type="number" {...register("age")} id="age" required />
 					</div>
 
-					{/* <div className="input-wrapper">
-								<label htmlFor="bornDate">Fecha Nacimiento</label>
-								<input
-									type="date"
-									{...register("bornDate")}  //user.model-backend
-									id="bornDate"
-									min=" 1930-01-01"
-									required
-								/>
-							</div> */}
-
 					<div className="input-wrapper">
 						<label htmlFor="image">Imagen</label>
-						<input type="file" 
-								accept="image/*" //mostrar archivos de tipo imagen
-								{...register("image")} id="image" />
+						<input
+							type="file" //carpeta de imagenes
+							accept="image/*" //mostrar archivos en el explorador cuya extencion sea de tipo imagen
+							{...register("image")}
+							id="image"
+						/>
 					</div>
 
 					<div className="active">
 						<label htmlFor="active">Activo</label>
 						<input type="checkbox" {...register("active")} id="active" />
 					</div>
-					<button type="submit" 
-					className={userId ? "btn-success" : "btn-form"}>
-						
+					<button type="submit" className={userId ? "btn-success" : "btn-form"}>
 						{
 							userId ? "Editar usuario" : "Agregar Usuario" //existe id Editar, no existe Añadir
 						}

@@ -55,9 +55,9 @@ div:where(.swal2-container) button:where(.swal2-styled){
 }
 
 .pagination-container{
-  margin: 5rem 2rem ;
+  margin-top: 8rem ;
   width: 100%;
-  button{
+  /* button{
     padding: 1rem;
     margin: 0.5rem;
     border:1px solid bisque;
@@ -66,26 +66,18 @@ div:where(.swal2-container) button:where(.swal2-styled){
     color: #856760;
     cursor: pointer;
     
-  }
+  } */
 }
-.flex-between{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-left:2rem;
-    input{
-      width: 350px;
-      height: 50px;
-      background-color: var(--primary-color-transp);
-      font-size: 1rem;
-      outline: none;
-      border: none;
-      padding: 1.5rem;
-      border-radius: 10px 5px;
-     
-    }
-  /* margin-top: 8rem;
-  margin-left: 6rem;
- */
+.input-pagination {
+  margin-left: 8rem;
+	width: 100px;
+	padding: 0.5rem;
+	resize: none;
+  outline: none;
+	border: none;
+	border-radius: 10px 5px;
+  box-shadow: var(--box-shadow);
+	color: var(--terra-color);
+	font-size: 1rem;
 
 }

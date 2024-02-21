@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import defaultPicture from "../../assets/images/avatar/usuario.jpg";
+import formatDate from "../../utils/formatDate";
 
 const URL = import.meta.env.VITE_SERVER_URL;
 
@@ -21,22 +22,23 @@ export default function AdminProduct() {
 	//-Enviar datos(data) al back con body de la request POST y llamar al endpoint POST /products
 	async function submitedData(data) {
 		try {
-			const formData = new FormData(); //armar a traves de una  req.un formulario y enviado con metodo POST
-			formData.append("producto", data.producto);
-			formData.append("descripcion", data.descripcion);
-			formData.append("precio", data.precio);
-			formData.append("fecha", data.fecha);
-			formData.append("image", data.image[0]);
+			// const formData = new FormData(); //FormData(multipart)armar a traves de una req.un formulario y enviado con metodo POST
+			// formData.append("producto", data.producto);
+			// formData.append("descripcion", data.descripcion);
+			// formData.append("precio", data.precio);
+			// formData.append("fecha", data.fecha);
+			// formData.append("image", data.image[0]);
 
-			// lo de arriba es === a lo de abajo
-
-			// for(const key of Object.keys(data)){//-for Itero propiedades, que me va a devolver un array con los valores(propiedades) de mi objeto
-			// 	if(key=='image'){
-			// 		formData.append(key, data.image[0]) //para que me mi lista de archivos tome el indice 0
-			// 		continue;
-			// 	}
-			// 	formData.append(key, data.key)
-			// }
+			//------- lo de arriba es === a lo de abajo------------------------------------------------------
+			const formData = new FormData();
+			for (const key of Object.keys(data)) {
+				//-for Itero propiedades, que me va a devolver un array con los valores(propiedades) de mi objeto
+				if (key == "image") {
+					formData.append(key, data.image[0]); //para que me mi lista de archivos tome el indice 0
+					continue;
+				}
+				formData.append(key, data[key]);
+			}
 
 			//-PUT: EDITAR (actualizar )producto
 			if (productId) {
@@ -88,7 +90,7 @@ export default function AdminProduct() {
 		try {
 			//bsck le mando queryparams :page, limit
 			const response = await axios.get(
-				`${URL}/products?pages=${page}&limit=${limit}`,
+				`${URL}/products?page=${page}&limit=${limit}`,
 			);
 			const products = response.data.products;
 			const total = response.data.total; //6
@@ -199,13 +201,13 @@ export default function AdminProduct() {
 	//-Buscador (Peticion) a mi servidor para buscar productos
 	async function handleSearch(e) {
 		try {
-			const search = e.target.value;
+			const search = e.target.value; //tomamos el evento del input
 			if (!search) getProducts(); //si mi input quedo vacio (""), que me traiga todos los productos
-			if (search.length <= 3) return; //que busque solo a partir de 3 letras
+
+			if (search.length <= 2) return; //que busque solo a partir de 2 letras
 			const response = await axios.get(`${URL}/products/search/${search}`);
 			const products = response.data.products;
-
-			setDbProducts(products); //actualizamos los productos
+			setDbProducts(products); //actualizamos los productos buscados.
 		} catch (error) {
 			console.log(error);
 		}
@@ -213,16 +215,7 @@ export default function AdminProduct() {
 
 	return (
 		<>
-			<main>
-				{/* <div className="input-container  input-wrapper">
-					<input
-						type="text"
-						className="input"
-						id="search"
-						placeholder="Buscar por nombre"
-					/>
-				</div> */}
-
+			<main className="main-container">
 				<div className="admin-container">
 					<section className="form-container">
 						{/* Formulario de carga de productos / /*cuando se llama al submit = enviale data a la funcion*/}
@@ -315,7 +308,7 @@ export default function AdminProduct() {
 									className="input-search"
 									id="search"
 									placeholder="Buscar por nombre"
-									onKeyUp={handleSearch}
+									onKeyUp={handleSearch} //ejecuta la funcion y manda el evento keyup(cada vez que aprieta la tecla)
 								/>
 							</div>
 						</div>
@@ -327,42 +320,57 @@ export default function AdminProduct() {
 									<th>Descripcion</th>
 									<th>Precio</th>
 									<th>Fecha</th>
+									<th>Categoria</th>
 									<th>Acciones</th>
 								</tr>
 							</thead>
 							<tbody id="table-body">
-								{dbProducts.map((product) => (
-									<tr key={product._id}>
-										<td>
-											<img
-												className="defaultPicture"
-												src={product.image ? product.image : defaultPicture}
-											/>
-										</td>
-										<td> {product.producto} </td>
-										<td> {product.descripcion} </td>
-										<td> {product.precio}</td>
-										<td> {product.fecha} </td>
+								{dbProducts.map((product) => {
+									return (
+										<tr key={product._id}>
+											<td>
+												<img
+													className="defaultPicture"
+													src={
+														// product.image ?
+														`${URL}/images/products/${product.image}`
+														//  : defaultPicture
+													}
+												/>
+											</td>
+											<td> {product.producto}</td>
+											<td> {product.descripcion} </td>
+											<td> {product.precio}</td>
+											<td> {formatDate(product.fecha)}</td>
+											{
+												<td>
+													{" "}
+													{product.category
+														? product.category.name
+														: "SIN CATEGORIA"}
+												</td>
+											}
 
-										<td>
-											<button
-												className="action-btn btn-danger"
-												onClick={() => deleteProduct(product._id)}
-												title="Borrar producto"
-											>
-												<i className="fa-solid fa-trash-can"></i>
-											</button>
+											<td>
+												<button
+													className="action-btn btn-danger"
+													onClick={() => deleteProduct(product._id)}
+													title="Borrar producto"
+												>
+													<i className="fa-solid fa-trash-can"></i>
+												</button>
 
-											<button
-												className="action-btn btn-edit"
-												onClick={() => setFormValue(product)}
-												title="Editar producto"
-											>
-												<i className="fa-solid fa-pen-to-square"></i>
-											</button>
-										</td>
-									</tr>
-								))}
+												<button
+													className="action-btn btn-edit"
+													onClick={() => setFormValue(product)}
+													title="Editar producto"
+												>
+													<i className="fa-solid fa-pen-to-square"></i>
+												</button>
+											</td>
+										</tr>
+									);
+								})}
 							</tbody>
 						</table>
 
@@ -370,18 +378,21 @@ export default function AdminProduct() {
 							{/* {Array.from({length:Math.ceil(total/limit)}).map((_, idx)=>(
 							<button key={idx} onClick={() => getProducts(idx)}> {idx+1} </button>
 						))} */}
-							{/* <button onClick={()=> getProducts(0)}>1</button>
-						<button onClick={()=> getProducts(1)}>2</button>
-						<button onClick={()=> getProducts(2)}>3</button>
-						<button onClick={()=> getProducts(3)}>4</button> */}
-							{totalButtons.map((btnNumber) => (
+							{/* <button onClick={() => getProducts(0)}>1</button>
+							<button onClick={() => getProducts(1)}>2</button>
+							<button onClick={() => getProducts(2)}>3</button>
+							<button onClick={() => getProducts(3)}>4</button> */}
+							{/* {totalButtons.map((btnNumber) => (
 								<button key={btnNumber} onClick={() => getProducts(btnNumber)}>
 									{btnNumber + 1}
 								</button>
-							))}
+							))} */}
 						</div>
 						<div>
-							<select onChange={(e) => setLimit(e.target.value)}>
+							<select
+								className="input-pagination "
+								onChange={(e) => setLimit(e.target.value)}
+							>
 								<option value={2}>2</option>
 								<option value={5}>5</option>
 								<option value={10}>10</option>
