@@ -3,8 +3,11 @@ import { useNavigate, NavLink } from "react-router-dom";
 import logo from "../../assets/images/logos/LOGO.png";
 import carrito from "../../assets/images/user-menu/carrito4.png";
 import usuario from "../../assets/images/user-menu/usuario2.png";
+import { useOrder } from "@/context/OrderContext";
 
 export default function Header() {
+	const { toggleMenu,  totalItems } = useOrder();
+
 	const navigate = useNavigate();
 
 	const { user, logout } = useUser();
@@ -12,14 +15,6 @@ export default function Header() {
 	const isAdmin = user ? user.role === "ADMIN_ROLE" : false;
 
 	console.log(isAdmin);
-
-	// const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-
-	// function logout() {
-	// 	localStorage.removeItem("currentUser");
-	// 	localStorage.removeItem("token");
-	// 	navigate("/");
-	// }
 
 	return (
 		<>
@@ -69,7 +64,13 @@ export default function Header() {
 				<div className="user-admin"></div>
 				<div className="user-menu" id="header-user">
 					<NavLink className="cart-shopping" href="#">
-						<img src={carrito} className="cart-user" alt="cart.img" />
+						<img
+							data-count={totalItems}
+							src={carrito}
+							className="cart-user"
+							onClick={() => toggleMenu()}
+							alt="cart.img"
+						/>
 					</NavLink>
 
 					{user ? (

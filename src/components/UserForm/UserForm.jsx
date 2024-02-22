@@ -40,6 +40,7 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 					title: "Usuario editado correctamente ",
 					text: `El usuario ${response.data.user?.name} fue editado correctamente`,
 				});
+				getUsers();
 				setUserId(null);
 				return; //para que mi codigo que sigue luego del if no se ejecute.
 			}

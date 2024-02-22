@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import defaultPicture from "../../assets/images/avatar/usuario.jpg";
+import defaultPicture from "../../assets/images/logos/LOGO.png";
 import formatDate from "../../utils/formatDate";
 
 const URL = import.meta.env.VITE_SERVER_URL;
@@ -43,7 +43,7 @@ export default function AdminProduct() {
 			//-PUT: EDITAR (actualizar )producto
 			if (productId) {
 				if (!TOKEN) return; //si NO HAY TOKEN cancelo
-				console.log(TOKEN);
+
 				const response = await axios.put(
 					`${URL}/products/${productId}`,
 					formData,
@@ -52,9 +52,9 @@ export default function AdminProduct() {
 				Swal.fire({
 					icon: "success",
 					title: "Producto editado correctamente ",
-					text: `El producto ${response.data.product?.name} fue editado correctamente`,
+					text: `El producto ${response.data.product?.producto} fue editado correctamente`,
 				});
-				getProducts();
+				// getProducts();
 				setProductId(null);
 				return; //para que mi codigo que sigue luego del if no se ejecute.
 			}
@@ -65,7 +65,7 @@ export default function AdminProduct() {
 			Swal.fire({
 				icon: "success",
 				title: "Producto creado ",
-				text: `El producto ${response.data.product.name} fue creado correctamente`,
+				text: `El producto ${response.data.product.producto} fue creado correctamente`,
 			});
 			getProducts();
 		} catch (error) {
@@ -123,7 +123,7 @@ export default function AdminProduct() {
 			confirmButtonText: "Borrar",
 			confirmButtonColor: "#e06262",
 			denyButtonText: `Cancelar`,
-			reverseButtons: true, // invertir botones borrar y cancelar
+			// reverseButtons: true, // invertir botones borrar y cancelar
 		}).then(async function (resultado) {
 			if (resultado.isConfirmed) {
 				try {
@@ -330,11 +330,11 @@ export default function AdminProduct() {
 										<tr key={product._id}>
 											<td>
 												<img
-													className="defaultPicture"
+													className="tablePicture"
 													src={
-														// product.image ?
+														product.image ?
 														`${URL}/images/products/${product.image}`
-														//  : defaultPicture
+														 : defaultPicture
 													}
 												/>
 											</td>

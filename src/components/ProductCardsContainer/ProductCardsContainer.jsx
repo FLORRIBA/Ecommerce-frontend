@@ -4,7 +4,6 @@ import { useState, useEffect} from 'react';
 import ProductCards from "../ProductCards/ProductCards";
 // import react from "@vitejs/plugin-react-swc";
 
-
 export const ProductCardsContainer = () =>{
                                  //product inicialmente va a ser un array vacio
     const [products, setProducts] = useState([]);
@@ -23,7 +22,7 @@ export const ProductCardsContainer = () =>{
             
             //funcion actualizar estado de los productos
             setProducts(response.data.products);         
-            console.log(response)
+            
 
         }catch (error){
             console.log(error)
@@ -35,7 +34,6 @@ export const ProductCardsContainer = () =>{
         <>
          <section className="card-section">
 
-        
             {
             products.map(product=>{
                 return(

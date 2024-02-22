@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form"; //LIBRERIA DE REACT
 import Swal from "sweetalert2";
 import axios from "axios";
 import UserTable from "../../components/UserTable/UserTable";
 import UserForm from "../../components/UserForm/UserForm";
-import { useNavigate } from "react-router-dom";
+
 
 const URL = import.meta.env.VITE_SERVER_URL;
 
@@ -57,11 +56,7 @@ export default function AdminUser() {
 		}); //cierra then
 	} //cierro funcion delete
 
-	// function logout() {
-	// 	localStorage.removeItem("currentUser");
-	// 	localStorage.removeItem("token");
-	// 	navigate("/");
-	// }
+
 
 	//-Obtener Usuarios
 	async function getUsers() {

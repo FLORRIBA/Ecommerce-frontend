@@ -1,63 +1,62 @@
 * {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
 }
 
 :root {
-    --font-family: 'Roboto', sans-serif;
-    --primary-color: #f0e8e0;
-    --primary-color-transp: #f0e8e08e;
-    --secondary-color: #382f28;
-    --secondary-color-dark: #221d19;
-    --terra-color: #9d776d;
-    --terra-color-dark: #856760;
-    --third-color: #cebeaf;
-    --text-light: #e8d9ca;
-    --light-transparency: #e8d9ca98;
-    --light-more-transparency: #e8d9ca54;
-    --box-shadow: 5px 1px 5px #e8d9ca;
-    --font: "Open Sans", sans-serif;
-    --font-secondary: "victor";
-    --font-poppins: "Poppins", sans-serif;
-    --font-pacifico: "Pacifico", cursive;
-  
+	--font-family: "Roboto", sans-serif;
+	--primary-color: #f0e8e0;
+	--primary-color-transp: #f0e8e08e;
+	--secondary-color: #382f28;
+	--secondary-color-dark: #221d19;
+	--terra-color: #9d776d;
+	--terra-color-dark: #856760;
+	--third-color: #cebeaf;
+	--text-light: #e8d9ca;
+	--light-transparency: #e8d9ca98;
+	--light-more-transparency: #e8d9ca54;
+	--box-shadow: 5px 1px 5px #e8d9ca;
+	--font: "Open Sans", sans-serif;
+	--font-secondary: "victor";
+	--font-poppins: "Poppins", sans-serif;
+	--font-pacifico: "Pacifico", cursive;
 }
 
 #root {
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
+	display: flex;
+	flex-direction: column;
+	min-height: 100dvh;
 }
 
-div:where(.swal2-container) button:where(.swal2-styled){
-  background-color: #e06262;
-  box-shadow: none !important;
+div:where(.swal2-container) button:where(.swal2-styled) {
+	background-color: #e06262;
+	box-shadow: none !important;
 }
 
 .swal2-success-ring,
 .swal2-x-mark {
-  border-color: bisque!important;
-  color: bisque !important;
+	border-color: bisque !important;
+	color: bisque !important;
 }
 
 .swal2-deny,
-.swal2-styled{
-  color: rgb(14, 13, 13) !important;
+.swal2-styled {
+	color: rgb(14, 13, 13) !important;
 }
-.swal2-deny{
-  background-color: bisque!important;
+.swal2-deny {
+	background-color: bisque !important;
+}
+.tablePicture {
+	height: 60px;
+	width: 60px;
+	border-radius: 150%;
+}
 
-}
-.defaultPicture{
-  height: 30px;
-  font-weight: 30px;
-}
-
-.pagination-container{
-  margin-top: 8rem ;
-  width: 100%;
-  /* button{
+.pagination-container {
+	margin-top: 8rem;
+	width: 100%;
+	/* button{
     padding: 1rem;
     margin: 0.5rem;
     border:1px solid bisque;
@@ -69,15 +68,44 @@ div:where(.swal2-container) button:where(.swal2-styled){
   } */
 }
 .input-pagination {
-  margin-left: 8rem;
+	margin-left: 8rem;
 	width: 100px;
 	padding: 0.5rem;
 	resize: none;
-  outline: none;
+	outline: none;
 	border: none;
 	border-radius: 10px 5px;
-  box-shadow: var(--box-shadow);
+	box-shadow: var(--box-shadow);
 	color: var(--terra-color);
 	font-size: 1rem;
+}
 
+.cart-wrapper {
+	display: block;
+	width: 0;
+	background-color: antiquewhite;
+	position: fixed;
+	top: 0;
+	/* padding: 50px 1rem; */
+	right: 0;
+	bottom: 0;
+	z-index: 1;
+	transition: widht 0.25s ease-in-out;
+	&.active {
+		width: 400px;
+	}
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+
+		li {
+			padding: 0.5rem;
+			border-bottom: 1px solid rgb(155, 107, 94);
+		}
+	}
+}
+
+.ml-auto {
+	margin-left: auto;
 }

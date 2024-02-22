@@ -1,0 +1,15 @@
+.cart-wrapper {
+	width: 100px;
+	background-color: antiquewhite;
+	position: fixed;
+	top: 0;
+	padding: 50px 1rem;
+	right: 0;
+	bottom: 0;
+	z-index:1;
+    transition: widht 0.25s ease-in-out;
+    &.active{
+        width: 400px;
+    }
+}
+
