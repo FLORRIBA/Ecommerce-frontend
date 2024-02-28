@@ -1,7 +1,9 @@
 const URL = import.meta.env.VITE_SERVER_URL;
 import React from "react";
 import formatDate from "@/utils/formatDate";
-import { useOrder } from "@/context/OrderContext";
+import { useOrder } from "../../context/OrderContext";
+import { NavLink } from "react-router-dom";
+
 
 export default function ProductCards({ product }) {
 	// console.log(product.image);
@@ -29,13 +31,16 @@ export default function ProductCards({ product }) {
 					</div>
 
 					<footer className="card-footer">
-						<a href="#" className="card-button">
+						<NavLink							
+							className="see-btn"
+							to={`/product-detail/${product._id}`}
+						>
 							Ver más
-						</a>
+						</NavLink>
+						<button className="card-btn" onClick={() => addItem(product)}>
+							Comprar
+						</button>
 					</footer>
-					<button className="card-btn" onClick={() => addItem(product._id)}>
-						Comprar
-					</button>
 				</div>
 			</article>
 		</>

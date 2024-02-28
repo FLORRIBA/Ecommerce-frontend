@@ -138,10 +138,16 @@ body {
 }
 .user-menu {
 	display: flex;
+	gap: 0.5rem;
 	align-items: center;
 	justify-content: space-around;
-	margin-left: 2rem;
+	margin-left: auto;
 	padding: 1rem;
+
+	* {
+		display: flex;
+		align-items: center;
+	}
 }
 .user-menu:hover {
 	cursor: pointer;
@@ -341,8 +347,8 @@ body {
 	justify-content: space-between;
 	padding: 10px 8px 8px;
 }
-.card-btn,
-.card-button {
+
+.card-btn {
 	background-color: var(--light-transparency);
 	color: var(--secondary-color);
 	border: none;
@@ -353,7 +359,17 @@ body {
 	cursor: pointer;
 	text-decoration: none;
 }
-
+.see-btn{
+	background-color: var(--light-transparency);
+	color: var(--secondary-color);
+	border: none;
+	padding: 10px;
+	font-size: 16px;
+	border-radius: 5px;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+	text-decoration: none;
+}
 /*FEATURE SECTION*/
 
 .line-feature {
@@ -902,6 +918,14 @@ td {
 }
 
 /*Imagen Avatar*/
+
+.tablePicture {
+	height: 70px;
+	width: 70px;
+	border-radius: 150%;
+	align-items: center;
+}
+
 .table-row .user-image img {
 	width: 70px;
 	height: 70px;

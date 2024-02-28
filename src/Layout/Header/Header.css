@@ -142,6 +142,8 @@ body {
 	justify-content: space-around;
 	margin-left: 2rem;
 	padding: 1rem;
+	position: fixed;
+	right: 0;
 }
 .user-menu:hover {
 	cursor: pointer;
@@ -151,11 +153,27 @@ body {
 	height: 70px;
 	transform: translateY(-50%);
 }
-.cart-shopping,
-.user {
+.cart-shopping {
 	color: var(--secondary-color);
 	font-size: 20px;
 	padding: 1rem;
+
+	&::after {
+		content: attr(data-count);
+		display: block;
+		position: absolute;
+		font-size: 0.8rem;
+		width: 25px;
+		height: 25px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		top: 15px;
+		right: 115px;
+		background-color: #9d776d ;
+		color: white;
+		border-radius: 50%;
+	}
 }
 .user {
 	margin-left: 1rem;

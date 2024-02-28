@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import defaultPicture from "../../assets/images/logos/LOGO.png";
 import formatDate from "../../utils/formatDate";
 
+
+
 const URL = import.meta.env.VITE_SERVER_URL;
 
 export default function AdminProduct() {
@@ -52,9 +54,9 @@ export default function AdminProduct() {
 				Swal.fire({
 					icon: "success",
 					title: "Producto editado correctamente ",
-					text: `El producto ${response.data.product?.producto} fue editado correctamente`,
+					text: `El producto ${response.data.product?.product} fue editado correctamente`,
 				});
-				// getProducts();
+				getProducts();
 				setProductId(null);
 				return; //para que mi codigo que sigue luego del if no se ejecute.
 			}
@@ -190,12 +192,10 @@ export default function AdminProduct() {
 		setValue("producto", product.producto);
 		setValue("descripcion", product.descripcion);
 		setValue("precio", product.precio);
-		// setValue("fecha", product.fecha);
+		// setValue("fecha", formatDate(product.fecha));
 		setValue("image", product.image || ""); //si es null or undefined que se setee un string vacio
 		setValue("active", product.active);
 		setValue("category", product.category || "");
-		// setFormValue(product);
-		// setUserId(product._id);
 	}
 
 	//-Buscador (Peticion) a mi servidor para buscar productos
@@ -332,9 +332,9 @@ export default function AdminProduct() {
 												<img
 													className="tablePicture"
 													src={
-														product.image ?
-														`${URL}/images/products/${product.image}`
-														 : defaultPicture
+														product.image
+															? `${URL}/images/products/${product.image}`
+															: defaultPicture
 													}
 												/>
 											</td>

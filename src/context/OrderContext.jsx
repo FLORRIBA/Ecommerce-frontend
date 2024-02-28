@@ -1,63 +1,130 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useUser } from "./UserContext";
+import Swal from "sweetalert2";
+import axios from "axios";
+
+const URL = import.meta.env.VITE_SERVER_URL;
 
 const OrderContext = createContext();
 
 export const useOrder = () => useContext(OrderContext);
 
 export const OrderProvider = ({ children }) => {
-	const [order, setOrder] = useState([]);
+	const { user } = useUser();
+
+	const [order, setOrder] = useState(
+		() => JSON.parse(localStorage.getItem("order")) || [],
+	);
 	const [cartMenu, setCartMenu] = useState(false); //togglemenu
 	const [total, setTotal] = useState(0);
-    const[totalItems, setTotalItems]=useState(0)
+	const [totalItems, setTotalItems] = useState(0);
+
+	useEffect(() => {
+		calculateTotalItems();
+		calculatetTotal();
+	}, [order]);
+
+	// if(!user)
+	// {return Swal.fire({
+	//   icon:'error',
+	//   title:'Oops..',
+	//   text:'Debes iniciar sesion para agregar productos al carrito'})}
 
 	function addItem(item) {
 		console.log(item);
-		//-Añado un elemento a mi orden
+		//-Añado un elemento a mi orden (array con mis productos guardados)
+		const itemIndex = order.findIndex((prod) => prod.productId === item._id); //nos fijamos si el producto ya esta en el carrito
+		let newOrder;
 
-		if (order.findIndex((prod) => prod.productId === item._id) >= 0) {
-			const newOrder = order.map((producto) => {
+		if (itemIndex > 0) {
+			//si encontre un index (0 o mayor)
+			newOrder = order.map((producto) => {
+				console.log(itemIndex);
+				//la nueva orden va ser generar un nuevo array, si el item ya existia en mi carrito, le sumo 1 a la cantidad
 				if (producto.productId === item._id) {
-					return { ...producto, quantity: producto.quantity +1};
+					console.log(producto);
+					return { ...producto, quantity: producto.quantity + 1 }; //a ese producto le agrego la cantidad +1
 				}
-                return producto;
-
-			})
-            calculatetTotal();
-            setOrder(newOrder);
-            return
-			// const product = order.find((prod) => prod.productId === item._id);
-			// product.quantity += 1;
-
-			// setOrder([...order]);
-			// calculatetTotal() //cada vez que agrego una cantidad
-			// return;
+				return producto;
+			});
+		} else {
+			//y el resto de los productos los retorno tal cual
+			const product = {
+				//schema de orden
+				productId: item._id,
+				quantity: 1,
+				price: item.precio,
+				productName: item.producto,
+				image: item.image,
+			};
+			newOrder = [...order, product];
 		}
-		const product = {
-			productId: item._id,
-			quantity: 1,
-			price: item.precio,
-			productName: item.producto,
-		};
-        //-Agrego un producto
-		setOrder((orders) => [...orders, product]); //nuevo array con todas las ordenes  q habia mas el nuevo producto
-		calculatetTotal();
-        calculatetTotal();
+
+		localStorage.setItem("order", JSON.stringify(newOrder));
+		setOrder(newOrder);
 	}
 
-    function calculateTotalItems(){
-        const totales= order.reduce((total,producto)=>{
-        total += producto.quantity;
-        },0)
-        setTotalItems(totales)
-    }
+	function calculateTotalItems() {
+		// const total = order.reduce((total, producto) => {
+		// 	total += producto.quantity;
+		// 	return total;
+		// }, 0);
+		//------es lo mismo que lo de abajo-------------
+		let totalItems = 0;
+		order.forEach((prod) => {
+			totalItems += prod.quantity;
+		});
+		setTotalItems(totalItems);
+	}
 
 	function calculatetTotal() {
 		//acc-acumulador
-		const totalAcc = order.reduce((acc, producto) => {
-			acc += producto.precio * producto.quantity;
-			return acc;
-		}, 0);
-		setTotal(totalAcc);
+		// const totalAcc = order.reduce((acc, producto) => {
+		// 	console.log(producto);
+		// 	acc += producto.price * producto.quantity;
+		// 	return acc;
+		// }, 0);
+		//------es lo mismo que lo de abajo-------------
+		let total = 0;
+		order.forEach((prod) => {
+			total += prod.price * prod.quantity;
+		});
+		setTotal(total);
+	}
+
+	async function finishOrder() {
+		try {
+			if (!user)
+				return Swal.fire(
+					"Debe loguearse",
+					"Para finalizar la orden debe estar logueado",
+					"error",
+				);
+
+				const newOrder = {
+				userId: user._id,
+				total: total,
+				products: order,
+			};
+			const response = await axios.post(`${URL}/orders`, newOrder);
+			console.log(response.data);
+
+		
+			Swal.fire({
+				icon: "success",
+				title: "Compra realizada",
+				text: "Gracias por su compra",
+			});
+
+			clearCart(	);
+		} catch (error) {
+			console.log(error);
+			Swal.fire({
+				icon: "error",
+				title: "Oops..",
+				text: "Algo salio mal!",
+			});
+		}
 	}
 
 	function removeItem(id) {
@@ -77,18 +144,18 @@ export const OrderProvider = ({ children }) => {
 		<OrderContext.Provider
 			value={{
 				order,
-				cartMenu,
+				cartMenu, // -estado true/false para mostrar el carrito
 				total,
-                totalItems,
+				totalItems,
 				addItem,
 				removeItem,
 				clearCart,
-				toggleMenu,
+				toggleMenu, //-f
+				finishOrder,
 			}}
 		>
 			{children}
 		</OrderContext.Provider>
 	);
 };
-
 export default OrderProvider;

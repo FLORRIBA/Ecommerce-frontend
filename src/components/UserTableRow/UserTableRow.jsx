@@ -7,7 +7,7 @@ export default function UserTableRow({
 	usr,
 	deleteUser,
 	setFormValueFn,
-	formData,
+	
 }) {
 	return (
 		<>
@@ -15,10 +15,8 @@ export default function UserTableRow({
 				{/* FILAS de la TABLA*/}
 				<td>
 					<img
-						className="defaultPicture"
-						src={
-							 `${URL}/images/users/${usr.image}` 
-						}
+						className="tablePicture"
+						src={`${URL}/images/users/${usr.image}`}
 					/>
 				</td>
 				<td> {usr.name} </td>

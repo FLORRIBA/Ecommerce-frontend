@@ -14,12 +14,11 @@ export default function UserTable({ users, usr, deleteUser, setFormValueFn, user
 					<thead>
                     {/* Primer Columna de la Tabla  */}
 						<tr className="table-head"> 
-							<th>Avatar</th>
+							<th>Imagen</th>
 							<th>Nombre Completo</th>
 							<th>Email</th>
 							<th>Localidad</th>
 							<th>Edad</th>
-							{/* <th>Fecha Nacimiento</th> */}
                             <th>Roles</th>
 							<th>Acciones</th>
 						</tr>

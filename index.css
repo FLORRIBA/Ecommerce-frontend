@@ -47,11 +47,6 @@ div:where(.swal2-container) button:where(.swal2-styled) {
 .swal2-deny {
 	background-color: bisque !important;
 }
-.tablePicture {
-	height: 60px;
-	width: 60px;
-	border-radius: 150%;
-}
 
 .pagination-container {
 	margin-top: 8rem;
@@ -80,32 +75,4 @@ div:where(.swal2-container) button:where(.swal2-styled) {
 	font-size: 1rem;
 }
 
-.cart-wrapper {
-	display: block;
-	width: 0;
-	background-color: antiquewhite;
-	position: fixed;
-	top: 0;
-	/* padding: 50px 1rem; */
-	right: 0;
-	bottom: 0;
-	z-index: 1;
-	transition: widht 0.25s ease-in-out;
-	&.active {
-		width: 400px;
-	}
-	ul {
-		list-style: none;
-		padding: 0;
-		margin: 0;
 
-		li {
-			padding: 0.5rem;
-			border-bottom: 1px solid rgb(155, 107, 94);
-		}
-	}
-}
-
-.ml-auto {
-	margin-left: auto;
-}

@@ -1,15 +1,13 @@
 import { useUser } from "@/context/UserContext";
-import { useNavigate, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import logo from "../../assets/images/logos/LOGO.png";
 import carrito from "../../assets/images/user-menu/carrito4.png";
 import usuario from "../../assets/images/user-menu/usuario2.png";
 import { useOrder } from "@/context/OrderContext";
+import "./Header.css";
 
 export default function Header() {
-	const { toggleMenu,  totalItems } = useOrder();
-
-	const navigate = useNavigate();
-
+	const { toggleMenu, totalItems } = useOrder();
 	const { user, logout } = useUser();
 
 	const isAdmin = user ? user.role === "ADMIN_ROLE" : false;
@@ -41,12 +39,17 @@ export default function Header() {
 						<NavLink to="/about-us" className="nav-link">
 							Acerca
 						</NavLink>
+						<NavLink to="/product-detail" className="nav-link">
+							Producto Detalle
+						</NavLink>
 						<NavLink to="/contact" className="nav-link">
 							Contacto
 						</NavLink>
-						<NavLink to="/register" className="nav-link">
-							Registro
-						</NavLink>
+						{!user && (
+							<NavLink to="/register" className="nav-link">
+								Registro
+							</NavLink>
+						)}
 
 						{isAdmin && (
 							<>
@@ -63,21 +66,25 @@ export default function Header() {
 
 				<div className="user-admin"></div>
 				<div className="user-menu" id="header-user">
-					<NavLink className="cart-shopping" href="#">
-						<img
-							data-count={totalItems}
-							src={carrito}
-							className="cart-user"
-							onClick={() => toggleMenu()}
-							alt="cart.img"
-						/>
-					</NavLink>
+			
 
+	
 					{user ? (
-						<NavLink className="header-link" onClick={() => logout()}>
-							Logout
-							{/* <img src={usuario} className="cart-user" alt="user.img" /> */}
-						</NavLink> //si tengo User pinto boton logout
+						<>
+							<NavLink className="cart-shopping " data-count={totalItems} href="#">
+								<img
+									
+									src={carrito}
+									className="cart-user"
+									onClick={() => toggleMenu()}
+									alt="cart.img"
+								/>
+							</NavLink>
+
+							<NavLink className="header-link" onClick={() => logout()}>
+								<img src={usuario} className="cart-user" alt="user.img" />
+							</NavLink>
+						</>
 					) : (
 						<NavLink to="/login" className="user  user-name">
 							<img src={usuario} className="cart-user" alt="user.img" />
@@ -87,4 +94,5 @@ export default function Header() {
 			</header>
 		</>
 	);
-}
+} 
+
