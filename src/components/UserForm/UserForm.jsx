@@ -40,7 +40,7 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 					title: "Usuario editado correctamente ",
 					text: `El usuario ${response.data.user?.name} fue editado correctamente`,
 				});
-				getUsers(); 
+				getUsers();
 				setUserId(null);
 				return; //para que mi codigo que sigue luego del if no se ejecute.
 			}
@@ -51,6 +51,7 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 				title: "Usuario creado ",
 				text: `El usuario ${response.data.user?.name} fue creado correctamente`,
 			});
+			// reset();
 			/*condicional:
 			-AdminUser=> solo obtener usuarios(recargar la TABLA) cuando a mi componente getUsers le mandemos la props como en AdminUser <UserForm getUsers={getUsers} /> 
 			-Register => no se lo enviamos, getUser es UNDEFINED no entra al if y no llama a la TABLA	*/
@@ -65,10 +66,10 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 				text: "Algunos datos ingresados no son correctos",
 			});
 			if (error.response.status === 401) {
-				//logout()
-				localStorage.removeItem("currentUser");
-				localStorage.removeItem("token");
-				navigate("/");
+				// logout();
+			localStorage.removeItem("currentUser");
+			localStorage.removeItem("token");
+			navigate("/");
 			}
 		}
 	}

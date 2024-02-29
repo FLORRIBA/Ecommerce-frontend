@@ -94,14 +94,14 @@ export const OrderProvider = ({ children }) => {
 
 	async function finishOrder() {
 		try {
-			if (!user)
-				return Swal.fire(
-					"Debe loguearse",
-					"Para finalizar la orden debe estar logueado",
-					"error",
-				);
+			// if (!user)
+			// 	return Swal.fire(
+			// 		"Debe loguearse",
+			// 		"Para finalizar la orden debe estar logueado",
+			// 		"error",
+			// 	);
 
-				const newOrder = {
+			const newOrder = {
 				userId: user._id,
 				total: total,
 				products: order,
@@ -109,14 +109,13 @@ export const OrderProvider = ({ children }) => {
 			const response = await axios.post(`${URL}/orders`, newOrder);
 			console.log(response.data);
 
-		
 			Swal.fire({
 				icon: "success",
 				title: "Compra realizada",
 				text: "Gracias por su compra",
 			});
 
-			clearCart(	);
+			clearCart();
 		} catch (error) {
 			console.log(error);
 			Swal.fire({

@@ -17,59 +17,56 @@ export const Cart = () => {
 		totalItems,
 		finishOrder,
 		clearCart,
-		newOrder,
+		
 	} = useOrder();
 	console.log("Order", order);
 
-	async function deleteOrder(ProductId) {
-		Swal.fire({
-			title: "Confirma borrar el producto",
-			text: `Realmente desea borrar el producto ${ProductId}`,
-			icon: "warning",
-			showDenyButton: true,
-			confirmButtonText: "Borrar",
-			confirmButtonColor: "#e06262",
-			denyButtonText: `Cancelar`,
-			// reverseButtons: true, // invertir botones borrar y cancelar
-		}).then(async function (resultado) {
-			if (resultado.isConfirmed) {
-				try {
-					Swal.fire({
-						icon: "success",
-						title: "Producto borrado",
-						text: `El producto ${ProductId} fue borrado correctamente`,
-						timer: 1500,
-					});
-					//-Actualizar el estado de Productos
-					getOrders();
-				} catch (error) {
-					Swal.fire({
-						icon: "error",
-						title: "Error al borrar el producto",
-						text: `No se pudo borrar el producto ${ProductId}`,
-					});
-				}
-			} //cierra if
-		}); //cierra then
-	}
+	// async function deleteOrder(ProductId) {
+	// 	Swal.fire({
+	// 		title: "Confirma borrar el producto",
+	// 		text: `Realmente desea borrar el producto ${ProductId}`,
+	// 		icon: "warning",
+	// 		showDenyButton: true,
+	// 		confirmButtonText: "Borrar",
+	// 		confirmButtonColor: "#e06262",
+	// 		denyButtonText: `Cancelar`,
+	// 		// reverseButtons: true, // invertir botones borrar y cancelar
+	// 	}).then(async function (resultado) {
+	// 		if (resultado.isConfirmed) {
+	// 			try {
+	// 				Swal.fire({
+	// 					icon: "success",
+	// 					title: "Producto borrado",
+	// 					text: `El producto ${ProductId} fue borrado correctamente`,
+	// 					timer: 1500,
+	// 				});
+	// 				//-Actualizar el estado de Productos
+	// 				// getOrders();
+	// 			} catch (error) {
+	// 				Swal.fire({
+	// 					icon: "error",
+	// 					title: "Error al borrar el producto",
+	// 					text: `No se pudo borrar el producto ${ProductId}`,
+	// 				});
+	// 			}
+	// 		} //cierra if
+	// 	}); //cierra then
+	// }
 
-	async function getOrders() {
-		try {
-			const response = await axios.get(`${URL}/orders`);
-			console.log(response.data);
-		} catch (error) {
-			console.log(error);
-		}
-	}
+	// async function getOrders() {
+	// 	try {
+	// 		const response = await axios.get(`${URL}/orders`);
+	// 		console.log(response.data);
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 	}
+	// }
 
-
-	  
-
-	useEffect(()=> {
-		//controlo la carga de usuario
-		getOrders();
-		//prevengo el bucle infinito
-	}, []);
+	// useEffect(() => {
+	// 	//controlo la carga de usuario
+	// 	getOrders();
+	// 	//prevengo el bucle infinito
+	// }, []);
 
 	return (
 		<div className={`cart-wrapper  ${cartMenu ? "active" : ""} `}>

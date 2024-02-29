@@ -39,8 +39,8 @@ timer: 2000,
      
 return;
     }
-
-user.password = undefined;
+// VER SAQUE ESTO
+// user.password = undefined;
 
 localStorage.setItem("currentUser", JSON.stringify(user));
 
