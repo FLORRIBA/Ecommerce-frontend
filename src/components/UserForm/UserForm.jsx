@@ -15,13 +15,9 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 
 	//-Obtener data del formulario y hacer un PUT o POST
 	async function submitedData(data) {
-		console.log("data");
-		console.log(data);
 
 		try {
-			
-
-			const formData = new FormData(); 
+			const formData = new FormData();
 
 			formData.append("name", data.name);
 			formData.append("email", data.email);
@@ -38,7 +34,6 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 			) {
 				formData.append("image", data.image[0]);
 			}
-			
 
 			//-PUT: EDITAR usuario
 			if (userId) {
@@ -56,6 +51,7 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 				});
 
 				getUsers();
+
 				setUserId(null);
 
 				return;
@@ -83,6 +79,15 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 				text: "Algunos datos ingresados no son correctos",
 			});
 			if (error.response.status === 401) {
+				// logout();
+				localStorage.removeItem("currentUser");
+				localStorage.removeItem("token");
+				navigate("/");
+
+				//logout()
+				localStorage.removeItem("currentUser");
+				localStorage.removeItem("token");
+				navigate("/");
 				// logout();
 				localStorage.removeItem("currentUser");
 				localStorage.removeItem("token");

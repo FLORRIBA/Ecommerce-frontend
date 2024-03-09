@@ -519,10 +519,9 @@ body {
 .about-title {
 	font-family: var(--font);
 	font-weight: 600;
-	color:#856760;
+	color: #856760;
 	font-size: 1.5rem;
 	margin-top: 10px;
-	
 }
 strong {
 	color: var(--terra-color);

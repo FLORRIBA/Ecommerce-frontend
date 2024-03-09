@@ -77,12 +77,12 @@ export const OrderProvider = ({ children }) => {
 
 	async function finishOrder() {
 		try {
-			if (!user)
-				return Swal.fire(
-					"Debe loguearse",
-					"Para finalizar la orden debe estar logueado",
-					"error",
-				);
+			// if (!user)
+			// 	return Swal.fire(
+			// 		"Debe loguearse",
+			// 		"Para finalizar la orden debe estar logueado",
+			// 		"error",
+			// 	);
 
 			const newOrder = {
 				userId: user._id,

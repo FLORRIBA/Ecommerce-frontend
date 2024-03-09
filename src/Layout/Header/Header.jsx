@@ -6,11 +6,18 @@ import usuario from "../../assets/images/user-menu/usuario2.png";
 import { useOrder } from "@/context/OrderContext";
 import "./Header.css";
 
-export const Header = () => {
+
+
+
+
+
+export  const Header=()=> {
+
 	const { toggleMenu, totalItems } = useOrder();
 	const { user, logout } = useUser();
 
 	const isAdmin = user ? user.role === "ADMIN_ROLE" : false;
+
 
 	return (
 		<>
