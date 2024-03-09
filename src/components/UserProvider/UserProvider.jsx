@@ -5,10 +5,10 @@ import { UserContext } from "../../context/UserContext";
 import axios from "axios";
 
 const URL = import.meta.env.VITE_SERVER_URL;
-//cualquier componente tratado como children
+
 export const UserProvider = ({ children }) => {
 	const [user, setUser] = useState(() => {
-	const savedUser = JSON.parse(localStorage.getItem("currentUser"));
+		const savedUser = JSON.parse(localStorage.getItem("currentUser"));
 		return savedUser || null;
 	});
 	const [admin, setAdmin] = useState(() => {
@@ -38,7 +38,6 @@ export const UserProvider = ({ children }) => {
 				icon: "success",
 				timer: 1500,
 			}).then(() => {
-				//se vaya a la ruta pcipal
 				navigate("/");
 			});
 		} catch (error) {

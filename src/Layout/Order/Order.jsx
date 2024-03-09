@@ -23,10 +23,10 @@ export const Order = () => {
 			<div className="table-container">
 				<div className="flex-between">
 					<h2>Ordenes</h2>
-					{/* <UserTable
+					<UserTable
             users={dbUsers}
             deleteUsers={deleteUser}
-            fnSetFormValue={fnSetFormValue}> /</UserTable> */}
+            fnSetFormValue={fnSetFormValue}> /</UserTable> 
 				</div>
 			</div>
 		</>

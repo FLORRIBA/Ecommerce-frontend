@@ -10,7 +10,7 @@ import Login from "./pages/Login/Login.jsx";
 import AdminUser from "./pages/AdminUser/AdminUser";
 import AdminProduct from "./pages/AdminProduct/AdminProduct";
 import AdminRoute from "./Guard/AdminRoute/AdminRoute";
-import Header from "./Layout/Header/Header";
+import { Header } from "./Layout/Header/Header";
 import Footer from "./Layout/Footer/Footer";
 import LoginPage from "./pages/Login/LoginPage";
 import { Cart } from "./Layout/Cart/Cart";
@@ -35,7 +35,7 @@ export default function App() {
 				<Route
 					path="/admin-user"
 					element={
-						<AdminRoute>							
+						<AdminRoute>
 							<AdminUser />
 						</AdminRoute>
 					}
@@ -43,7 +43,7 @@ export default function App() {
 				<Route
 					path="/admin-product"
 					element={
-						<AdminRoute>							
+						<AdminRoute>
 							<AdminProduct />
 						</AdminRoute>
 					}

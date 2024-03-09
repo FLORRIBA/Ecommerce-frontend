@@ -6,13 +6,11 @@ import usuario from "../../assets/images/user-menu/usuario2.png";
 import { useOrder } from "@/context/OrderContext";
 import "./Header.css";
 
-export default function Header() {
+export const Header = () => {
 	const { toggleMenu, totalItems } = useOrder();
 	const { user, logout } = useUser();
 
 	const isAdmin = user ? user.role === "ADMIN_ROLE" : false;
-
-	console.log(isAdmin);
 
 	return (
 		<>
@@ -31,16 +29,12 @@ export default function Header() {
 
 				<nav className="main-nav" id="header-nav">
 					<ul className="nav-list">
-						{/* <NavLink to="/" className={ ({isActive}) => isActive ? "nav-link active" : "nav-link" }>Gracias</NavLink> */}
 
 						<NavLink to="/" className="nav-link">
 							Gracias
 						</NavLink>
 						<NavLink to="/about-us" className="nav-link">
 							Acerca
-						</NavLink>
-						<NavLink to="/product-detail" className="nav-link">
-							Producto Detalle
 						</NavLink>
 						<NavLink to="/contact" className="nav-link">
 							Contacto
@@ -66,14 +60,14 @@ export default function Header() {
 
 				<div className="user-admin"></div>
 				<div className="user-menu" id="header-user">
-			
-
-	
 					{user ? (
 						<>
-							<NavLink className="cart-shopping " data-count={totalItems} href="#">
+							<NavLink
+								className="cart-shopping "
+								data-count={totalItems}
+								href="#"
+							>
 								<img
-									
 									src={carrito}
 									className="cart-user"
 									onClick={() => toggleMenu()}
@@ -94,5 +88,4 @@ export default function Header() {
 			</header>
 		</>
 	);
-} 
-
+};

@@ -51,16 +51,6 @@ div:where(.swal2-container) button:where(.swal2-styled) {
 .pagination-container {
 	margin-top: 8rem;
 	width: 100%;
-	/* button{
-    padding: 1rem;
-    margin: 0.5rem;
-    border:1px solid bisque;
-    border-radius: 5px;
-    background-color: var(--primary-color);
-    color: #856760;
-    cursor: pointer;
-    
-  } */
 }
 .input-pagination {
 	margin-left: 8rem;

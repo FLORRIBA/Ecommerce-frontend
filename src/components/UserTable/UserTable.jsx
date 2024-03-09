@@ -1,10 +1,8 @@
 import React from "react";
-import UserTableRow from "../../components/UserTableRow/UserTableRow";
+import {UserTableRow} from "../../components/UserTableRow/UserTableRow";
 
 //users=lo recibo como una props
-export default function UserTable({ users, usr, deleteUser, setFormValueFn, userId, setUserId}) {
-
-    // deleteUser('un ID desde el componente hijo UserTable');
+export default function UserTable({ users, deleteUser, setFormValueFn, userId, setUserId}) {
 
 	return (
 		<>
@@ -24,7 +22,7 @@ export default function UserTable({ users, usr, deleteUser, setFormValueFn, user
 						</tr>
 					</thead>
 					<tbody id="table-body">
-						{
+					{
 							//users es un array de usuarios
 							users.map((usr) => (
                         //le pasamos la key   usr = usr que estoy iterando en este map 

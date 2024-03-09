@@ -24,12 +24,6 @@ export const OrderProvider = ({ children }) => {
 		calculatetTotal();
 	}, [order]);
 
-	// if(!user)
-	// {return Swal.fire({
-	//   icon:'error',
-	//   title:'Oops..',
-	//   text:'Debes iniciar sesion para agregar productos al carrito'})}
-
 	function addItem(item) {
 		console.log(item);
 		//-Añado un elemento a mi orden (array con mis productos guardados)
@@ -65,11 +59,6 @@ export const OrderProvider = ({ children }) => {
 	}
 
 	function calculateTotalItems() {
-		// const total = order.reduce((total, producto) => {
-		// 	total += producto.quantity;
-		// 	return total;
-		// }, 0);
-		//------es lo mismo que lo de abajo-------------
 		let totalItems = 0;
 		order.forEach((prod) => {
 			totalItems += prod.quantity;
@@ -78,13 +67,7 @@ export const OrderProvider = ({ children }) => {
 	}
 
 	function calculatetTotal() {
-		//acc-acumulador
-		// const totalAcc = order.reduce((acc, producto) => {
-		// 	console.log(producto);
-		// 	acc += producto.price * producto.quantity;
-		// 	return acc;
-		// }, 0);
-		//------es lo mismo que lo de abajo-------------
+
 		let total = 0;
 		order.forEach((prod) => {
 			total += prod.price * prod.quantity;
@@ -101,22 +84,21 @@ export const OrderProvider = ({ children }) => {
 					"error",
 				);
 
-				const newOrder = {
+			const newOrder = {
 				userId: user._id,
 				total: total,
 				products: order,
 			};
 			const response = await axios.post(`${URL}/orders`, newOrder);
-			console.log(response.data);
+			console.log(newOrder);
 
-		
 			Swal.fire({
 				icon: "success",
 				title: "Compra realizada",
 				text: "Gracias por su compra",
 			});
 
-			clearCart(	);
+			clearCart();
 		} catch (error) {
 			console.log(error);
 			Swal.fire({
@@ -150,7 +132,7 @@ export const OrderProvider = ({ children }) => {
 				addItem,
 				removeItem,
 				clearCart,
-				toggleMenu, //-f
+				toggleMenu,
 				finishOrder,
 			}}
 		>

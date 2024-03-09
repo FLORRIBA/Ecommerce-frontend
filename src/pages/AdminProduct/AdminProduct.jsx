@@ -5,44 +5,37 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import defaultPicture from "../../assets/images/logos/LOGO.png";
 import formatDate from "../../utils/formatDate";
-
-
-
 const URL = import.meta.env.VITE_SERVER_URL;
 
 export default function AdminProduct() {
 	const { register, handleSubmit, setValue } = useForm();
-	// State to hold the product data *-Usamos el useStategancho para crear una variable de estado dbproducts y una función setDbUserspara actualizarla.
 	const [dbProducts, setDbProducts] = useState([]); //Estado() inicializado como un array vacio.
 	const [productId, setProductId] = useState(); //deshabilitar el Password al editar
 	const [categories, setCategories] = useState([]);
-	const [totalButtons, setTotalButtons] = useState([]);
 	const [limit, setLimit] = useState(2);
+
 	const navigate = useNavigate();
 	const TOKEN = localStorage.getItem("token");
 
 	//-Enviar datos(data) al back con body de la request POST y llamar al endpoint POST /products
 	async function submitedData(data) {
 		try {
-			// const formData = new FormData(); //FormData(multipart)armar a traves de una req.un formulario y enviado con metodo POST
-			// formData.append("producto", data.producto);
-			// formData.append("descripcion", data.descripcion);
-			// formData.append("precio", data.precio);
-			// formData.append("fecha", data.fecha);
-			// formData.append("image", data.image[0]);
+			const formData = new FormData(); //FormData(multipart)armar a traves de una req.un formulario y enviado con metodo POST
+			formData.append("producto", data.producto);
+			formData.append("descripcion", data.descripcion);
+			formData.append("precio", data.precio);
+			formData.append("fecha", data.fecha);
+			formData.append("category", data.category);
 
-			//------- lo de arriba es === a lo de abajo------------------------------------------------------
-			const formData = new FormData();
-			for (const key of Object.keys(data)) {
-				//-for Itero propiedades, que me va a devolver un array con los valores(propiedades) de mi objeto
-				if (key == "image") {
-					formData.append(key, data.image[0]); //para que me mi lista de archivos tome el indice 0
-					continue;
-				}
-				formData.append(key, data[key]);
+			if (
+				data.image &&
+				data.image.length > 0 &&
+				data.image[0] instanceof File
+			) {
+				formData.append("image", data.image[0]);
 			}
 
-			//-PUT: EDITAR (actualizar )producto
+			//-PUT: EDITAR (actualizar)producto
 			if (productId) {
 				if (!TOKEN) return; //si NO HAY TOKEN cancelo
 
@@ -51,38 +44,38 @@ export default function AdminProduct() {
 					formData,
 					{ headers: { authorization: TOKEN } },
 				);
+				const producto = response.data.product.producto;
+				console.log(response.data.producto);
 				Swal.fire({
 					icon: "success",
 					title: "Producto editado correctamente ",
-					text: `El producto ${response.data.product?.product} fue editado correctamente`,
+					text: `El producto ${producto} fue editado correctamente`,
 				});
+
 				getProducts();
 				setProductId(null);
-				return; //para que mi codigo que sigue luego del if no se ejecute.
+				// setFormValue();
+				return;
 			}
 
 			//-POST: CREAR producto
-			const response = await axios.post(`${URL}/products`, formData); //enviamos al back
-			// console.log(response);
+			const response = await axios.post(`${URL}/products`, formData, {
+				headers: { Authorization: TOKEN },
+			});
+
 			Swal.fire({
 				icon: "success",
 				title: "Producto creado ",
-				text: `El producto ${response.data.product.producto} fue creado correctamente`,
+				text: `El producto ${response.data.product?.producto} fue creado correctamente`,
 			});
 			getProducts();
+			setFormValue();
 		} catch (error) {
-			console.log(error);
 			Swal.fire({
+				title: "No se creo el producto",
+				text: "Alguno de los datos ingresados no son correctos",
 				icon: "error",
-				title: "No se creo producto",
-				text: "Algunos datos ingresados no son correctos",
 			});
-			if (error.response.status === 401) {
-				//logout()
-				localStorage.removeItem("currentUser");
-				localStorage.removeItem("token");
-				navigate("/");
-			}
 		}
 	}
 
@@ -95,16 +88,8 @@ export default function AdminProduct() {
 				`${URL}/products?page=${page}&limit=${limit}`,
 			);
 			const products = response.data.products;
-			const total = response.data.total; //6
-			//redondeo hacia arriba
-			const buttonsQuantity = Math.ceil(total / limit); //6/2=3 botones
 
-			const arrayButtons = []; //itero en el template de react
-			for (let i = 0; i < buttonsQuantity; i++) {
-				arrayButtons.push(i);
-			}
-
-			setTotalButtons(arrayButtons);
+			const total = response.data.total;
 
 			setDbProducts(products);
 		} catch (error) {
@@ -125,13 +110,11 @@ export default function AdminProduct() {
 			confirmButtonText: "Borrar",
 			confirmButtonColor: "#e06262",
 			denyButtonText: `Cancelar`,
-			// reverseButtons: true, // invertir botones borrar y cancelar
 		}).then(async function (resultado) {
 			if (resultado.isConfirmed) {
 				try {
-					// const TOKEN = localStorage.getItem("token");
 					if (!TOKEN) return;
-					// console.log(`usuario a borrar ${id}`);
+
 					//-Borrar Productos en la BD
 					await axios.delete(`${URL}/products/${id}`, {
 						headers: { authorization: TOKEN }, //objeto opciones, tiene la propiedad header{}
@@ -150,16 +133,9 @@ export default function AdminProduct() {
 						title: "Error al borrar el producto",
 						text: `No se pudo borrar el producto ${id}`,
 					});
-					if (error.response.status === 401) return logout();
 				}
-			} //cierra if
-		}); //cierra then
-	}
-
-	function logout() {
-		localStorage.removeItem("currentUser");
-		localStorage.removeItem("token");
-		navigate("/");
+			}
+		});
 	}
 
 	useEffect(
@@ -176,7 +152,6 @@ export default function AdminProduct() {
 		try {
 			const response = await axios.get("http://localhost:3000/categories");
 			const categoriesDB = response.data.categories;
-			// console.log(response);
 
 			// setear un estado que maneje las categorias RECIBIDAS DE BD
 			setCategories(categoriesDB);
@@ -186,16 +161,22 @@ export default function AdminProduct() {
 	}
 
 	function setFormValue(product) {
+		let fechaFormateada = "";
+
+		setProductId(product?._id || null);
+
+		if (product) {
+			const fechaObjeto = new Date(product.fecha);
+			fechaFormateada = fechaObjeto.toISOString().substring(0, 10);
+		}
 		//iteramos propiedades de los objetos
-		console.log(product);
-		setProductId(product._id);
-		setValue("producto", product.producto);
-		setValue("descripcion", product.descripcion);
-		setValue("precio", product.precio);
-		// setValue("fecha", formatDate(product.fecha));
-		setValue("image", product.image || ""); //si es null or undefined que se setee un string vacio
-		setValue("active", product.active);
-		setValue("category", product.category || "");
+
+		setValue("producto", product?.producto || "");
+		setValue("descripcion", product?.descripcion || "");
+		setValue("category", product?.category._id || "");
+		setValue("precio", product?.precio || "");
+		setValue("fecha", fechaFormateada);
+		setValue("image", product?.image || "");
 	}
 
 	//-Buscador (Peticion) a mi servidor para buscar productos
@@ -205,7 +186,10 @@ export default function AdminProduct() {
 			if (!search) getProducts(); //si mi input quedo vacio (""), que me traiga todos los productos
 
 			if (search.length <= 2) return; //que busque solo a partir de 2 letras
+
+			//que busque solo a partir de 2 letras
 			const response = await axios.get(`${URL}/products/search/${search}`);
+
 			const products = response.data.products;
 			setDbProducts(products); //actualizamos los productos buscados.
 		} catch (error) {
@@ -218,7 +202,6 @@ export default function AdminProduct() {
 			<main className="main-container">
 				<div className="admin-container">
 					<section className="form-container">
-						{/* Formulario de carga de productos / /*cuando se llama al submit = enviale data a la funcion*/}
 						<form
 							id="user-form"
 							onSubmit={handleSubmit(submitedData)}
@@ -301,7 +284,6 @@ export default function AdminProduct() {
 					{/* TABLA */}
 					<section className="table-container">
 						<div className="flex-between">
-							{/* <h2>Tabla de Productos</h2> */}
 							<div className="input-group">
 								<input
 									type="text"
@@ -339,7 +321,12 @@ export default function AdminProduct() {
 												/>
 											</td>
 											<td> {product.producto}</td>
-											<td> {product.descripcion} </td>
+											<td>
+												{" "}
+												<div className="table-description">
+													{product.descripcion}{" "}
+												</div>
+											</td>
 											<td> {product.precio}</td>
 											<td> {formatDate(product.fecha)}</td>
 											{
@@ -374,20 +361,7 @@ export default function AdminProduct() {
 							</tbody>
 						</table>
 
-						<div className="pagination-container">
-							{/* {Array.from({length:Math.ceil(total/limit)}).map((_, idx)=>(
-							<button key={idx} onClick={() => getProducts(idx)}> {idx+1} </button>
-						))} */}
-							{/* <button onClick={() => getProducts(0)}>1</button>
-							<button onClick={() => getProducts(1)}>2</button>
-							<button onClick={() => getProducts(2)}>3</button>
-							<button onClick={() => getProducts(3)}>4</button> */}
-							{/* {totalButtons.map((btnNumber) => (
-								<button key={btnNumber} onClick={() => getProducts(btnNumber)}>
-									{btnNumber + 1}
-								</button>
-							))} */}
-						</div>
+						<div className="pagination-container"></div>
 						<div>
 							<select
 								className="input-pagination "

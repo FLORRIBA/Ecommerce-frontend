@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form"; //LIBRERIA DE REACT
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 const TOKEN = localStorage.getItem("token"); //variable global para mi componente para usar el TOKEN en distintas peticiones.
 const URL = import.meta.env.VITE_SERVER_URL;
@@ -16,17 +15,30 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 
 	//-Obtener data del formulario y hacer un PUT o POST
 	async function submitedData(data) {
+		console.log("data");
+		console.log(data);
+
 		try {
-			//formData-(Image:FileList [0]) nueva clase que permite manejar req y armar un formulario de datos que va a ser enviado a traves del metodo POST
-			const formData = new FormData(); //data de formulario
-			for (const key of Object.keys(data)) {
-				//-for Itero propiedades, que me va a devolver un array con los valores(propiedades) de mi objeto
-				if (key == "image") {
-					formData.append(key, data.image[0]); //para que me mi lista de archivos tome el indice 0
-					continue;
-				}
-				formData.append(key, data[key]);
+			
+
+			const formData = new FormData(); 
+
+			formData.append("name", data.name);
+			formData.append("email", data.email);
+			formData.append("location", data.location);
+			formData.append("age", data.age);
+
+			if (!userId) {
+				formData.append("password", data.password);
 			}
+			if (
+				data.image &&
+				data.image.length > 0 &&
+				data.image[0] instanceof File
+			) {
+				formData.append("image", data.image[0]);
+			}
+			
 
 			//-PUT: EDITAR usuario
 			if (userId) {
@@ -35,15 +47,20 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 				const response = await axios.put(`${URL}/users/${userId}`, formData, {
 					headers: { authorization: TOKEN },
 				});
+				console.log(response);
+
 				Swal.fire({
 					icon: "success",
 					title: "Usuario editado correctamente ",
 					text: `El usuario ${response.data.user?.name} fue editado correctamente`,
 				});
-				getUsers(); 
+
+				getUsers();
 				setUserId(null);
-				return; //para que mi codigo que sigue luego del if no se ejecute.
+
+				return;
 			}
+
 			//-POST: CREAR usuario
 			const response = await axios.post(`${URL}/users`, formData); //enviamos al back
 			Swal.fire({
@@ -51,6 +68,7 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 				title: "Usuario creado ",
 				text: `El usuario ${response.data.user?.name} fue creado correctamente`,
 			});
+			// reset();
 			/*condicional:
 			-AdminUser=> solo obtener usuarios(recargar la TABLA) cuando a mi componente getUsers le mandemos la props como en AdminUser <UserForm getUsers={getUsers} /> 
 			-Register => no se lo enviamos, getUser es UNDEFINED no entra al if y no llama a la TABLA	*/
@@ -65,7 +83,7 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 				text: "Algunos datos ingresados no son correctos",
 			});
 			if (error.response.status === 401) {
-				//logout()
+				// logout();
 				localStorage.removeItem("currentUser");
 				localStorage.removeItem("token");
 				navigate("/");
@@ -109,7 +127,7 @@ const UserForm = ({ getUsers, formValue, userId, setUserId }) => {
 							type="email"
 							{...register("email")} //user.model-backend
 							id="email"
-							minLength="6"
+							minLength="5"
 							maxLength="140"
 							required
 							pattern="[a-zA-Z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"

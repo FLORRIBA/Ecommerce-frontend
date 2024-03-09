@@ -3,12 +3,7 @@ import defaultPicture from "../../assets/images/avatar/usuario.jpg";
 
 const URL = import.meta.env.VITE_SERVER_URL;
 
-export default function UserTableRow({
-	usr,
-	deleteUser,
-	setFormValueFn,
-	
-}) {
+export const  UserTableRow =({ usr, deleteUser, setFormValueFn })=> {
 	return (
 		<>
 			<tr key={usr._id}>
@@ -16,7 +11,10 @@ export default function UserTableRow({
 				<td>
 					<img
 						className="tablePicture"
-						src={`${URL}/images/users/${usr.image}`}
+						src={
+							usr.image ? `${URL}/images/users/${usr.image}` : defaultPicture
+						}
+						alt={`${usr.name} profile picture`}
 					/>
 				</td>
 				<td> {usr.name} </td>
